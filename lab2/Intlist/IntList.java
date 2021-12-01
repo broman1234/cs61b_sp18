@@ -116,12 +116,7 @@ public class IntList {
             P = P.rest;
             K = K.rest;
         }
-        P = B;
-        while (P != null) {
-            K.rest = new IntList(P.first, null);
-            P = P.rest;
-            K = K.rest;
-        }
+        K.rest = B;
         return Q;
     }
 
