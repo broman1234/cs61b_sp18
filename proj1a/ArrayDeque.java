@@ -120,7 +120,7 @@ public class ArrayDeque<T> {
     public T removeLast() {
         if (removeNextLast == removeNextFirst) {
             T removedItem = items[removeNextLast];
-            items = (T[]) new Object[8];
+            // items = (T[]) new Object[8];
             addNextFirst = 0;
             addNextLast = 1;
             size = 0;
@@ -163,7 +163,7 @@ public class ArrayDeque<T> {
     public T removeFirst() {
         if (removeNextLast == removeNextFirst) {
             T removedItem = items[removeNextFirst];
-            items = (T[]) new Object[8];
+            // items = (T[]) new Object[8];
             addNextFirst = 0;
             addNextLast = 1;
             size = 0;
