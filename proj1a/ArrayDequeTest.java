@@ -2,6 +2,14 @@
 public class ArrayDequeTest {
 
     /* Utility method for printing out size checks. */
+    public static boolean checkEmpty(boolean expected, boolean actual) {
+        if (expected != actual) {
+            System.out.println("isEmpty() returned " + actual + ", but expected: " + expected);
+            return false;
+        }
+        return true;
+    }
+
     public static boolean checkSize(int expected, int actual) {
         if (expected != actual) {
             System.out.println("size() returned " + actual + ", but expected: " + expected);
@@ -43,7 +51,7 @@ public class ArrayDequeTest {
 
         ArrayDeque<String> lla1 = new ArrayDeque<>();
 
-        boolean passed = checkSize(0, lla1.size());
+        boolean passed = checkEmpty(true, lla1.isEmpty());
 
         passed = checkResizing(8, lla1.len()) && passed;
 
@@ -105,7 +113,7 @@ public class ArrayDequeTest {
 
         ArrayDeque<Integer> lla1 = new ArrayDeque<>();
 
-        boolean passed = checkSize(0, lla1.size());
+        boolean passed = checkEmpty(true, lla1.isEmpty());
 
         lla1.addFirst(10);
         lla1.addFirst(20);
@@ -115,7 +123,8 @@ public class ArrayDequeTest {
         int removedItem1 = lla1.removeFirst();
         int removedItem2 = lla1.removeLast();
 
-        passed = checkSize(0, lla1.size()) && passed;
+        passed = checkEmpty(true, lla1.isEmpty()) && passed;
+
         passed = checkResizing(8, lla1.len()) && passed;
 
         System.out.println("Printing out removed item: " + removedItem1 + " " + removedItem2);
