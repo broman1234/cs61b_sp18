@@ -118,6 +118,9 @@ public class ArrayDeque<T> {
     }
 
     public T removeLast() {
+        if (isEmpty()) {
+            return null;
+        }
         if (removeNextLast == removeNextFirst) {
             T removedItem = items[removeNextLast];
             // items = (T[]) new Object[8];
@@ -129,7 +132,7 @@ public class ArrayDeque<T> {
         T removedItem = items[removeNextLast];
         items[removeNextLast] = null;
         size = size - 1;
-        if (((size / (double) items.length) >= 0.25) || items.length <= 15) {
+        if (((size / (double) (items.length)) >= 0.25) || items.length <= 15) {
             if (removeNextLast == 0) {
                 addNextLast = removeNextLast;
                 removeNextLast = items.length - 1;
@@ -155,12 +158,15 @@ public class ArrayDeque<T> {
             removeNextFirst = 0;
             removeNextLast = size - 1;
              */
-            resize(items.length / 2);
+            resize((int) (items.length * 0.5));
         }
         return removedItem;
     }
 
     public T removeFirst() {
+        if (isEmpty()) {
+            return null;
+        }
         if (removeNextLast == removeNextFirst) {
             T removedItem = items[removeNextFirst];
             // items = (T[]) new Object[8];
@@ -172,7 +178,7 @@ public class ArrayDeque<T> {
         T removedItem = items[removeNextFirst];
         items[removeNextFirst] = null;
         size = size - 1;
-        if (((size / (double) items.length) >= 0.25) || items.length <= 15) {
+        if (((size / (double) (items.length)) >= 0.25) || items.length <= 15) {
             if (removeNextFirst == items.length - 1) {
                 addNextFirst = removeNextFirst;
                 removeNextFirst = 0;
@@ -198,7 +204,7 @@ public class ArrayDeque<T> {
             removeNextFirst = 0;
             removeNextLast = size - 1;
              */
-            resize(items.length / 2);
+            resize((int) (items.length * 0.5));
         }
         return removedItem;
     }
