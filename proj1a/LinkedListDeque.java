@@ -1,19 +1,19 @@
-public class LinkedListDeque<Shooka>{
-    private ShookaNode sentinel;
+public class LinkedListDeque<T>{
+    private TNode sentinel;
     private int size;
 
-    public class ShookaNode {
-        public ShookaNode prev;
-        public Shooka item;
-        public ShookaNode next;
+    private class TNode {
+        public TNode prev;
+        public T item;
+        public TNode next;
 
-        public ShookaNode(ShookaNode p, Shooka i, ShookaNode n) {
+        public TNode(TNode p, T i, TNode n) {
             prev = p;
             item = i;
             next = n;
         }
 
-        public Shooka nodeGetRecursive(int index) {
+        public T nodeGetRecursive(int index) {
             if (index == 0) {
                 return item;
             }
@@ -23,30 +23,30 @@ public class LinkedListDeque<Shooka>{
 
     public LinkedListDeque() {
         size = 0;
-        sentinel = new ShookaNode(sentinel, null, sentinel);
+        sentinel = new TNode(sentinel, null, sentinel);
     }
 
-    public void LinkedListDeque(Shooka item) {
-        sentinel.prev = new ShookaNode(sentinel, item, sentinel);
+    public void LinkedListDeque(T item) {
+        sentinel.prev = new TNode(sentinel, item, sentinel);
         sentinel.next = sentinel.prev;
         size = 1;
     }
 
-    public void addFirst(Shooka item) {
+    public void addFirst(T item) {
         if (size == 0) {
             LinkedListDeque(item);
         } else {
-            sentinel.next = new ShookaNode(sentinel, item, sentinel.next);
+            sentinel.next = new TNode(sentinel, item, sentinel.next);
             sentinel.next.next.prev = sentinel.next;
             size = size + 1;
         }
     }
 
-    public void addLast(Shooka item) {
+    public void addLast(T item) {
         if (size == 0) {
             LinkedListDeque(item);
         } else {
-            sentinel.prev.next = new ShookaNode(sentinel.prev, item, sentinel);
+            sentinel.prev.next = new TNode(sentinel.prev, item, sentinel);
             sentinel.prev = sentinel.prev.next;
             size = size + 1;
         }
@@ -61,19 +61,19 @@ public class LinkedListDeque<Shooka>{
     }
 
     public void printDeque() {
-        ShookaNode p = sentinel.next;
+        TNode p = sentinel.next;
         while (p!= sentinel) {
             System.out.print(p.item + " ");
             p = p.next;
         }
     }
 
-    public Shooka removeFirst() {
+    public T removeFirst() {
         if (size == 0) {
             return null;
         } else {
             size = size - 1;
-            Shooka itemToBeReturned = sentinel.next.item;
+            T itemToBeReturned = sentinel.next.item;
             sentinel.next = sentinel.next.next;
             sentinel.next.prev.next = null;
             sentinel.next.prev.prev = null;
@@ -82,12 +82,12 @@ public class LinkedListDeque<Shooka>{
         }
     }
 
-    public Shooka removeLast() {
+    public T removeLast() {
         if (size == 0) {
             return null;
         } else {
             size = size - 1;
-            Shooka itemToBeReturned = sentinel.prev.item;
+            T itemToBeReturned = sentinel.prev.item;
             sentinel.prev.next = null;
             sentinel.prev = sentinel.prev.prev;
             sentinel.prev.next.prev = null;
@@ -96,14 +96,14 @@ public class LinkedListDeque<Shooka>{
         }
     }
 
-    public Shooka get(int index) {
+    public T get(int index) {
         if (index >= size) {
             return null;
         }
         if (index == 0) {
             return sentinel.next.item;
         }
-        ShookaNode p = sentinel.next;
+        TNode p = sentinel.next;
         while (index > 0) {
             p = p.next;
             index = index - 1;
@@ -111,14 +111,14 @@ public class LinkedListDeque<Shooka>{
         return p.item;
     }
 
-    public Shooka getRecursive(int index) {
+    public T getRecursive(int index) {
         if (index >= size) {
             return null;
         }
         if (index == 0) {
             return sentinel.next.item;
         }
-        ShookaNode p = sentinel.next;
+        TNode p = sentinel.next;
         return p.next.nodeGetRecursive(index - 1);
     }
 }

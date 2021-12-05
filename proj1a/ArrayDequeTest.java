@@ -10,7 +10,7 @@ public class ArrayDequeTest {
         return true;
     }
 
-    public static <Shooka> boolean checkGet(Shooka expected, Shooka actual) {
+    public static <T> boolean checkGet(T expected, T actual) {
         if (expected != actual) {
             System.out.println("get(int i) returned " + actual + ", but expected: " + expected);
             return false;

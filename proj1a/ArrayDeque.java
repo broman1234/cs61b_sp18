@@ -1,28 +1,28 @@
 //import java.lang.reflect.Array;
 
-public class ArrayDeque<Shooka> {
+public class ArrayDeque<T> {
 
     public int size;
-    public Shooka[] items;
+    public T[] items;
     public int addNextFirst;
     public int addNextLast;
     public int removeNextFirst;
     public int removeNextLast;
 
     public ArrayDeque() {
-        items = (Shooka[]) new Object[8];
+        items = (T[]) new Object[8];
         addNextFirst = 0;
         addNextLast = 1;
         size = 0;
     }
 
     private void resize(int capacity) {
-        Shooka[] a = (Shooka[]) new Object[capacity];
+        T[] a = (T[]) new Object[capacity];
         System.arraycopy(items, 0, a, 0, size);
         items = a;
     }
 
-    public void addLast(Shooka item) {
+    public void addLast(T item) {
         if (size == 0) {
             items[addNextLast] = item;
             size = size + 1;
@@ -54,7 +54,7 @@ public class ArrayDeque<Shooka> {
         }
     }
 
-    public void addFirst(Shooka item) {
+    public void addFirst(T item) {
         if (size == 0) {
             items[addNextFirst] = item;
             size = size + 1;
@@ -86,16 +86,16 @@ public class ArrayDeque<Shooka> {
         }
     }
 
-    public Shooka removeLast() {
+    public T removeLast() {
         if (removeNextLast == removeNextFirst) {
-            Shooka removedItem = items[removeNextLast];
-            items = (Shooka[]) new Object[8];
+            T removedItem = items[removeNextLast];
+            items = (T[]) new Object[8];
             addNextFirst = 0;
             addNextLast = 1;
             size = 0;
             return removedItem;
         }
-        Shooka removedItem = items[removeNextLast];
+        T removedItem = items[removeNextLast];
         items[removeNextLast] = null;
         size = size - 1;
         if (((size / (double) items.length) >= 0.25) || items.length <= 15) {
@@ -107,7 +107,7 @@ public class ArrayDeque<Shooka> {
                 removeNextLast = removeNextLast - 1;
             }
         } else {
-            Shooka[] a = (Shooka[]) new Object[(int) (items.length / 2)];
+            T[] a = (T[]) new Object[(int) (items.length / 2)];
             if (removeNextFirst > removeNextLast) {
                 int copyNum1 = items.length - removeNextFirst;
                 System.arraycopy(items, removeNextFirst, a, 0, copyNum1);
@@ -126,16 +126,16 @@ public class ArrayDeque<Shooka> {
         return removedItem;
     }
 
-    public Shooka removeFirst() {
+    public T removeFirst() {
         if (removeNextLast == removeNextFirst) {
-            Shooka removedItem = items[removeNextFirst];
-            items = (Shooka[]) new Object[8];
+            T removedItem = items[removeNextFirst];
+            items = (T[]) new Object[8];
             addNextFirst = 0;
             addNextLast = 1;
             size = 0;
             return removedItem;
         }
-        Shooka removedItem = items[removeNextFirst];
+        T removedItem = items[removeNextFirst];
         items[removeNextFirst] = null;
         size = size - 1;
         if (((size / (double) items.length) >= 0.25) || items.length <= 15) {
@@ -147,7 +147,7 @@ public class ArrayDeque<Shooka> {
                 removeNextFirst = removeNextFirst + 1;
             }
         } else {
-            Shooka[] a = (Shooka[]) new Object[(int) (items.length / 2)];
+            T[] a = (T[]) new Object[(int) (items.length / 2)];
             if (removeNextFirst < removeNextLast) {
                 int copyNum1 = (items.length - 1) - removeNextFirst + 1;
                 System.arraycopy(items, removeNextFirst, a, 0, copyNum1);
@@ -170,7 +170,7 @@ public class ArrayDeque<Shooka> {
         return size;
     }
 
-    public Shooka get(int i) {
+    public T get(int i) {
         return items[i];
     }
 
