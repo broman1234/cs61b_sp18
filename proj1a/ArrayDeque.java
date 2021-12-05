@@ -2,12 +2,12 @@
 
 public class ArrayDeque<T> {
 
-    public int size;
-    public T[] items;
-    public int addNextFirst;
-    public int addNextLast;
-    public int removeNextFirst;
-    public int removeNextLast;
+    private int size;
+    private T[] items;
+    private int addNextFirst;
+    private int addNextLast;
+    private int removeNextFirst;
+    private int removeNextLast;
 
     public ArrayDeque() {
         items = (T[]) new Object[8];
@@ -178,7 +178,19 @@ public class ArrayDeque<T> {
         return items[i];
     }
 
+    public void printDeque() {
+        int i = 0;
+        while (i < items.length) {
+            if (items[i] == null) {
+                System.out.print(", ");
+            }
+            System.out.print(items[i] + " ");
+            i = i + 1;
+        }
+    }
+    /*
     public int len() {
         return items.length;
     }
+     */
 }

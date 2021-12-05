@@ -53,7 +53,7 @@ public class ArrayDequeTest {
 
         boolean passed = checkEmpty(true, lla1.isEmpty());
 
-        passed = checkResizing(8, lla1.len()) && passed;
+        // passed = checkResizing(8, lla1.len()) && passed;
 
         lla1.addFirst("middle");
         lla1.addFirst("front");
@@ -66,11 +66,13 @@ public class ArrayDequeTest {
 
         passed = checkSize(8, lla1.size()) && passed;
 
-        passed = checkResizing(16, lla1.len()) && passed;
+        // passed = checkResizing(16, lla1.len()) && passed;
+        /*
         passed = checkResizing(15, lla1.addNextFirst) && passed;
         passed = checkResizing(8, lla1.addNextLast) && passed;
         passed = checkResizing(0, lla1.removeNextFirst) && passed;
         passed = checkResizing(7, lla1.removeNextLast) && passed;
+         */
 
         lla1.addLast("f");
         lla1.addFirst("g");
@@ -81,11 +83,16 @@ public class ArrayDequeTest {
         passed = checkGet("f", lla1.get(8)) && passed;
         passed = checkGet("g", lla1.get(15)) && passed;
 
-        passed = checkResizing(16, lla1.len()) && passed;
+        // passed = checkResizing(16, lla1.len()) && passed;
+
+        System.out.println("Printing out deque: ");
+        lla1.printDeque();
+        /*
         passed = checkResizing(14, lla1.addNextFirst) && passed;
         passed = checkResizing(9, lla1.addNextLast) && passed;
         passed = checkResizing(15, lla1.removeNextFirst) && passed;
         passed = checkResizing(8, lla1.removeNextLast) && passed;
+         */
 
         lla1.removeLast();
         lla1.removeLast();
@@ -97,11 +104,13 @@ public class ArrayDequeTest {
 
         passed = checkSize(3, lla1.size()) && passed;
 
-        passed = checkResizing(8, lla1.len()) && passed;
+        // passed = checkResizing(8, lla1.len()) && passed;
+        /*
         passed = checkResizing(7, lla1.addNextFirst) && passed;
         passed = checkResizing(3, lla1.addNextLast) && passed;
         passed = checkResizing(0, lla1.removeNextFirst) && passed;
         passed = checkResizing(2, lla1.removeNextLast) && passed;
+         */
 
         printTestStatus(passed);
     }
@@ -125,7 +134,7 @@ public class ArrayDequeTest {
 
         passed = checkEmpty(true, lla1.isEmpty()) && passed;
 
-        passed = checkResizing(8, lla1.len()) && passed;
+        // passed = checkResizing(8, lla1.len()) && passed;
 
         System.out.println("Printing out removed item: " + removedItem1 + " " + removedItem2);
 
