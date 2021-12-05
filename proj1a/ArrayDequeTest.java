@@ -79,9 +79,9 @@ public class ArrayDequeTest {
 
         passed = checkSize(10, lla1.size()) && passed;
 
-        passed = checkGet("front", lla1.get(7)) && passed;
-        passed = checkGet("f", lla1.get(8)) && passed;
-        passed = checkGet("g", lla1.get(15)) && passed;
+        passed = checkGet("g", lla1.get(0)) && passed;
+        passed = checkGet("b", lla1.get(7)) && passed;
+        passed = checkGet("f", lla1.get(9)) && passed;
 
         // passed = checkResizing(16, lla1.len()) && passed;
 
