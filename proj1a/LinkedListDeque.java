@@ -1,11 +1,11 @@
-public class LinkedListDeque<T>{
+public class LinkedListDeque<T> {
     private TNode sentinel;
     private int size;
 
     private class TNode {
-        public TNode prev;
-        public T item;
-        public TNode next;
+        private TNode prev;
+        private T item;
+        private TNode next;
 
         public TNode(TNode p, T i, TNode n) {
             prev = p;
@@ -26,15 +26,20 @@ public class LinkedListDeque<T>{
         sentinel = new TNode(sentinel, null, sentinel);
     }
 
-    private void LinkedListDeque(T item) {
+    /*
+    private void linkedList(T item) {
         sentinel.prev = new TNode(sentinel, item, sentinel);
         sentinel.next = sentinel.prev;
         size = 1;
     }
+     */
 
     public void addFirst(T item) {
         if (size == 0) {
-            LinkedListDeque(item);
+            //linkedList(item);
+            sentinel.prev = new TNode(sentinel, item, sentinel);
+            sentinel.next = sentinel.prev;
+            size = 1;
         } else {
             sentinel.next = new TNode(sentinel, item, sentinel.next);
             sentinel.next.next.prev = sentinel.next;
@@ -44,7 +49,10 @@ public class LinkedListDeque<T>{
 
     public void addLast(T item) {
         if (size == 0) {
-            LinkedListDeque(item);
+            //LinkedListDeque(item);
+            sentinel.prev = new TNode(sentinel, item, sentinel);
+            sentinel.next = sentinel.prev;
+            size = 1;
         } else {
             sentinel.prev.next = new TNode(sentinel.prev, item, sentinel);
             sentinel.prev = sentinel.prev.next;
@@ -62,7 +70,7 @@ public class LinkedListDeque<T>{
 
     public void printDeque() {
         TNode p = sentinel.next;
-        while (p!= sentinel) {
+        while (p != sentinel) {
             System.out.print(p.item + " ");
             p = p.next;
         }
