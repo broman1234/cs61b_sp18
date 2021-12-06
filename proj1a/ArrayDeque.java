@@ -164,6 +164,8 @@ public class ArrayDeque<T> {
             resize((int) (items.length * 0.5));
             items[removeNextLast] = null;
             size = size - 1;
+            addNextLast = removeNextLast;
+            removeNextLast = removeNextLast - 1;
         }
         return removedItem;
     }
@@ -215,6 +217,8 @@ public class ArrayDeque<T> {
             resize((int) (items.length * 0.5));
             items[removeNextFirst] = null;
             size = size - 1;
+            addNextFirst = removeNextFirst;
+            removeNextFirst = removeNextFirst + 1;
         }
         return removedItem;
     }
