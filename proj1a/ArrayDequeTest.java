@@ -1,5 +1,6 @@
 /** Performs some basic Array list tests. */
 public class ArrayDequeTest {
+
     /* Utility method for printing out empty checks. */
     public static boolean checkEmpty(boolean expected, boolean actual) {
         if (expected != actual) {
@@ -38,7 +39,8 @@ public class ArrayDequeTest {
         }
     }
 
-    /** Adds a few things to the list, and remove a few things, checking size(), get(int i) are correct. */
+    /** Adds a few things to the list, and remove a few things,
+     * checking size(), get(int i) are correct. */
     public static void addRemoveSizeGetResizingTest() {
         System.out.println("Running add/remove/Size/Get/Resizing test.");
 
