@@ -10,7 +10,7 @@
 
 public class AList<Item> {
     /** Creates an empty list. */
-    private Item[] = items;
+    private Item[] items;
     private int size;
 
     public AList() {
@@ -55,6 +55,6 @@ public class AList<Item> {
         Item removedItem = getLast();
         items[size - 1] = null; // we need to do this for generic types
         size = size - 1;
-        return removeItem;
+        return removedItem;
     }
 }
