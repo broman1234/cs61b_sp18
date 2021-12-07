@@ -3,13 +3,13 @@ public class NBody {
 		In in = new In(fileName);
 		int numOfPlanet = in.readInt();
 		double radiusOfUniverse = in.readDouble();
-		return radiusOfUniverse; 
+		return radiusOfUniverse;
 	}
 
 	public static Planet[] readPlanets(String fileName) {
 		In in = new In(fileName);
 		int numOfPlanet = in.readInt();
-		double radiusOfUniverse = in.readDouble(); 
+		double radiusOfUniverse = in.readDouble();
 		Planet[] arrayOfPlanets = new Planet[numOfPlanet];
 		int i = 0;
 		while (i < numOfPlanet) {
@@ -34,10 +34,10 @@ public class NBody {
 		Planet[] planets = readPlanets(filename);
 
 		/* the set scale for drawing on screen */
-        StdDraw.setXscale(-radiusOfUniverse, +radiusOfUniverse); 
-        StdDraw.setYscale(-radiusOfUniverse, +radiusOfUniverse);
+		StdDraw.setXscale(-radiusOfUniverse, +radiusOfUniverse);
+		StdDraw.setYscale(-radiusOfUniverse, +radiusOfUniverse);
 
-        /* Clears the drawing window. */
+		/* Clears the drawing window. */
 		StdDraw.clear();
 
 		/* Draw universe background */
@@ -70,18 +70,18 @@ public class NBody {
 			StdDraw.picture(0, 0, "images/starfield.jpg");
 			for (int i = 0; i < planets.length; i++) {
 				planets[i].draw();
-		 	}
-		 	StdDraw.show();
-		 	StdDraw.pause(10);
+			}
+			StdDraw.show();
+			StdDraw.pause(10);
 			time += dt;
 		}
 
 		StdOut.printf("%d\n", planets.length);
 		StdOut.printf("%.2e\n", radiusOfUniverse);
 		for (int i = 0; i < planets.length; i++) {
-    		StdOut.printf("%11.4e %11.4e %11.4e %11.4e %11.4e %12s\n",
-                	planets[i].xxPos, planets[i].yyPos, planets[i].xxVel,
-                	planets[i].yyVel, planets[i].mass, planets[i].imgFileName);   
+			StdOut.printf("%11.4e %11.4e %11.4e %11.4e %11.4e %12s\n",
+					planets[i].xxPos, planets[i].yyPos, planets[i].xxVel,
+					planets[i].yyVel, planets[i].mass, planets[i].imgFileName);
 		}
 
 		// StdAudio.play("audio/2001.mid");
