@@ -57,4 +57,14 @@ public class AList<Item> {
         size = size - 1;
         return removedItem;
     }
+
+    public void insert(Item x, int position) {
+        Item[] newItems = (Item[]) new Object[items.length + 1];
+
+        System.arraycopy(items, 0, newItems, 0, position);
+        newItems[position] = x;
+
+        System.arraycopy(items, position, newItems, position + 1, items.length - position);
+        items = newItems;
+    }
 }
