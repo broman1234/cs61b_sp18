@@ -1,5 +1,5 @@
 public class SLList {
-    public class IntNode {
+    private class IntNode {
         public int item;
         public IntNode next;
         public IntNode(int i, IntNode n) {
@@ -49,6 +49,22 @@ public class SLList {
             p = p.next;
         }
         p.next = new IntNode(x, null);
+    }
+
+    public void insert(int item, int position) {
+        if (sentinel.next == null || position == 0) {
+            addFirst(item);
+            return;
+        }
+
+        IntNode currentNode = sentinel.next.next;
+        while (position > 1 && currentNode.next != null) {
+            position -= 1;
+            currentNode = currentNode.next;
+        }
+
+        IntNode newNode = new IntNode(item, currentNode.next);
+        currentNode.next = newNode;
     }
 
     /** Crashes when you call addLast on an empty SLList. Fix it. */
