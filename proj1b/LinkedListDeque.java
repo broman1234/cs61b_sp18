@@ -42,7 +42,6 @@ public class LinkedListDeque<T> implements Deque<T> {
     @Override
     public void addLast(T item) {
         if (size == 0) {
-            //LinkedListDeque(item);
             sentinel.prev = new TNode(sentinel, item, sentinel);
             sentinel.next = sentinel.prev;
             size = 1;
