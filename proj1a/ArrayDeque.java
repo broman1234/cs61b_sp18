@@ -19,7 +19,7 @@ public class ArrayDeque<T> {
     }
 
     private boolean timeToReduceSize() {
-        return (((size - 1) / (double) (items.length)) < 0.25) || items.length > 15;
+        return (((size - 1) / (double) (items.length)) < 0.25) && items.length > 15;
     }
 
     private void resize(int capacity) {
