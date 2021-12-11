@@ -2,10 +2,10 @@ public class ArrayDeque<T> {
 
     private int size;
     private T[] items;
-    private int addNextFirst;
-    private int addNextLast;
-    private int removeNextFirst;
-    private int removeNextLast;
+    private int addNextFirst; /* the front of the array where the item will be added to */
+    private int addNextLast; /* the back of the array where the item will be added to */
+    private int removeNextFirst; /* the index of the item at the beginning of the array. */
+    private int removeNextLast; /* the index of the item at the end of the array */
 
     public ArrayDeque() {
         items = (T[]) new Object[8];
@@ -40,42 +40,16 @@ public class ArrayDeque<T> {
         removeNextLast = size - 1;
     }
 
-    /** helper function to the function addLast(T item).
-     * @param item
-     * @param addIndex
-     */
-    private void addLastItem(T item, int addIndex) {
+    /** helper function for adding an item to an array. */
+    private void addItem(T item, int addIndex) {
         items[addIndex] = item;
         size = size + 1;
-        removeNextLast = addIndex;
     }
 
-    /** helper function to the funtion addFirst(T item).
-     * @param item
-     * @param addIndex
-     */
-    private void addFirstItem(T item, int addIndex) {
-        items[addIndex] = item;
-        size = size + 1;
-        removeNextFirst = addIndex;
-    }
-
-    /** helper function to the function removeLast().
-     * @param removeIndex
-     */
-    private void removeLastItem(int removeIndex) {
+    /** helper function for removing an item from an array. */
+    private void removeItem(int removeIndex) {
         items[removeIndex] = null;
         size = size - 1;
-        addNextLast = removeIndex;
-    }
-
-    /** helper function to the function removeFirst().
-     * @param removeIndex
-     */
-    private void removeFirstItem(int removeIndex) {
-        items[removeIndex] = null;
-        size = size - 1;
-        addNextFirst = removeIndex;
     }
 
     private boolean isOneItemLeft() {
@@ -92,40 +66,22 @@ public class ArrayDeque<T> {
 
     public void addLast(T item) {
         if (isEmpty()) {
-            /*
-            items[addNextLast] = item;
-            size = size + 1;
+            addItem(item, addNextLast);
             removeNextLast = addNextLast;
-             */
-            addLastItem(item, addNextLast);
             removeNextFirst = addNextLast;
             addNextLast = addNextLast + 1;
         } else {
             if (timeToIncreaseSize()) {
                 resize(size * 2);
-                /*
-                items[addNextLast] = item;
-                size = size + 1;
+                addItem(item, addNextLast);
                 removeNextLast = addNextLast;
-                 */
-                addLastItem(item, addNextLast);
                 addNextLast = addNextLast + 1;
             } else {
+                addItem(item, addNextLast);
+                removeNextLast = addNextLast;
                 if (addNextLast == items.length - 1) {
-                    /*
-                    items[addNextLast] = item;
-                    size = size + 1;
-                    removeNextLast = addNextLast;
-                     */
-                    addLastItem(item, addNextLast);
                     addNextLast = 0;
                 } else {
-                    /*
-                    items[addNextLast] = item;
-                    size = size + 1;
-                    removeNextLast = addNextLast;
-                     */
-                    addLastItem(item, addNextLast);
                     addNextLast = addNextLast + 1;
                 }
             }
@@ -134,40 +90,22 @@ public class ArrayDeque<T> {
 
     public void addFirst(T item) {
         if (isEmpty()) {
-            /*
-            items[addNextFirst] = item;
-            size = size + 1;
+            addItem(item, addNextFirst);
             removeNextFirst = addNextFirst;
-             */
-            addFirstItem(item, addNextFirst);
             removeNextLast = addNextFirst;
             addNextFirst = items.length - 1;
         } else {
             if (timeToIncreaseSize()) {
                 resize(size * 2);
-                /*
-                items[addNextFirst] = item;
-                size = size + 1;
+                addItem(item, addNextFirst);
                 removeNextFirst = addNextFirst;
-                 */
-                addFirstItem(item, addNextFirst);
                 addNextFirst = addNextFirst - 1;
             } else {
+                addItem(item, addNextFirst);
+                removeNextFirst = addNextFirst;
                 if (addNextFirst == 0) {
-                    /*
-                    items[addNextFirst] = item;
-                    size = size + 1;
-                    removeNextFirst = addNextFirst;
-                     */
-                    addFirstItem(item, addNextFirst);
                     addNextFirst = items.length - 1;
                 } else {
-                    /*
-                    items[addNextFirst] = item;
-                    size = size + 1;
-                    removeNextFirst = addNextFirst;
-                     */
-                    addFirstItem(item, addNextFirst);
                     addNextFirst = addNextFirst - 1;
                 }
             }
@@ -179,41 +117,20 @@ public class ArrayDeque<T> {
             return null;
         }
         if (isOneItemLeft()) {
-            /*
-            T removedItem = items[removeNextLast];
-            addNextFirst = 0;
-            addNextLast = 1;
-            size = 0;
-            return removedItem;
-             */
             return removeToEmpty(removeNextLast);
         }
         T removedItem = items[removeNextLast];
         if (timeToReduceSize()) {
             resize((int) (items.length * 0.5));
-             /*
-            items[removeNextLast] = null;
-            size = size - 1;
+            removeItem(removeNextLast);
             addNextLast = removeNextLast;
-             */
-            removeLastItem(removeNextLast);
             removeNextLast = removeNextLast - 1;
         } else {
+            removeItem(removeNextLast);
+            addNextLast = removeNextLast;
             if (removeNextLast == 0) {
-                /*
-                items[removeNextLast] = null;
-                size = size - 1;
-                addNextLast = removeNextLast;
-                */
-                removeLastItem(removeNextLast);
                 removeNextLast = items.length - 1;
             } else {
-                /*
-                items[removeNextLast] = null;
-                size = size - 1;
-                addNextLast = removeNextLast;
-                 */
-                removeLastItem(removeNextLast);
                 removeNextLast = removeNextLast - 1;
             }
         }
@@ -225,41 +142,20 @@ public class ArrayDeque<T> {
             return null;
         }
         if (isOneItemLeft()) {
-            /*
-            T removedItem = items[removeNextFirst];
-            addNextFirst = 0;
-            addNextLast = 1;
-            size = 0;
-            return removedItem;
-             */
             return removeToEmpty(removeNextFirst);
         }
         T removedItem = items[removeNextFirst];
         if (timeToReduceSize()) {
             resize((int) (items.length * 0.5));
-            /*
-            items[removeNextFirst] = null;
-            size = size - 1;
+            removeItem(removeNextFirst);
             addNextFirst = removeNextFirst;
-             */
-            removeFirstItem(removeNextFirst);
             removeNextFirst = removeNextFirst + 1;
         } else {
+            removeItem(removeNextFirst);
+            addNextFirst = removeNextFirst;
             if (removeNextFirst == items.length - 1) {
-                /*
-                items[removeNextFirst] = null;
-                size = size - 1;
-                addNextFirst = removeNextFirst;
-                 */
-                removeFirstItem(removeNextFirst);
                 removeNextFirst = 0;
             } else {
-                /*
-                items[removeNextFirst] = null;
-                size = size - 1;
-                addNextFirst = removeNextFirst;
-                 */
-                removeFirstItem(removeNextFirst);
                 removeNextFirst = removeNextFirst + 1;
             }
         }

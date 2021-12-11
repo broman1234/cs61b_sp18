@@ -48,8 +48,6 @@ public class ArrayDequeTest {
 
         boolean passed = checkEmpty(true, lla1.isEmpty());
 
-        // passed = checkResizing(8, lla1.len()) && passed;
-
         lla1.addFirst("middle");
         lla1.addFirst("front");
         lla1.addLast("back");
