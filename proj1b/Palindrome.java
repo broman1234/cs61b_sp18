@@ -1,3 +1,5 @@
+import org.w3c.dom.html.HTMLLinkElement;
+
 public class Palindrome {
     public Deque<Character> wordToDeque(String word) {
         Deque<Character> stringDeque = new LinkedListDeque<>();
