@@ -39,14 +39,13 @@ public class IntList {
       * to change. */
     public static IntList incrList(IntList L, int x) {
         /* Your code here. */
-        IntList Q = new IntList(L.first, L.rest);
-        if (Q.rest == null) {
-            Q.first = L.first + x;
-            return Q;
+        // IntList Q = new IntList(L.first, L.rest);
+        if (L == null) {
+            return null;
         }
-        Q.first = L.first + x;
-        Q.rest = incrList(L.rest, x);   
-        return Q;     
+        int newFirst = L.first + x;
+        IntList newRest = incrList(L.rest, x);
+        return new IntList(newFirst, newRest);
     }
 
     /** Returns an IntList identical to L, but with
@@ -54,24 +53,58 @@ public class IntList {
       * the 'new' keyword. */
     public static IntList dincrList(IntList L, int x) {
         /* Your code here. */
-        IntList Q = L;
-        if (Q.rest == null) {
-            Q.first = L.first + x;
-            return Q;
+		if (L == null) {
+			return null;
+		}
+		L.first = L.first + x;
+		dincrList(L.rest, x);
+		return L;
+	}
+
+	public static IntList dilsans(IntList x, int y) {
+		if (x == null) {
+			return null;
+		}
+		x.rest = dilsans(x.rest, y);
+		if (x.first == y) {
+			return x.rest;
+		}
+		return x;
+	}
+
+	public void print() {
+        IntList p = this;
+        while (p != null) {
+            System.out.print(p.first + " ");
+            p = p.rest;
         }
-        Q.first = L.first + x;
-        Q.rest = dincrList(L.rest, x); 
-        return Q;
+		System.out.println();
     }
 
-
 	public static void main(String[] args) {
+
 		IntList L = new IntList(15, null);
 		L = new IntList(10, L);
 		L = new IntList(5, L);
 
-		System.out.println(L.iterativeSize());
-		System.out.println(incrList(L, 3).first);
-        System.out.println(dincrList(L, 3).first); 
+		//System.out.println(L.iterativeSize());
+		//System.out.println(incrList(L, 3).first);
+		IntList newList = incrList(L, 4);
+		newList.print();
+		L.print();
+		newList = dincrList(L, 3);
+		newList.print();
+		L.print();
+
+		/*
+		IntList a = new IntList(4, null);
+		a = new IntList(7, a);
+		a = new IntList(5, a);
+		a = new IntList(4, a);
+		a = new IntList(3, a);
+		a = new IntList(2, a);
+		dilsans(a, 4);
+		a.print();
+		 */
 	}
 } 
