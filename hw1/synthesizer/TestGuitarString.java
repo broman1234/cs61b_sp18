@@ -21,7 +21,7 @@ public class TestGuitarString {
             StdAudio.play(aString.sample());
             aString.tic();
         }
-        System.out.println(aString);
+        //System.out.println(aString);
     }
 
 

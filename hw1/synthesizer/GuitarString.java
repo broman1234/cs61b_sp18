@@ -74,6 +74,7 @@ public class GuitarString {
         return buffer.peek();
     }
 
+    /*
     @Override
     public String toString() {
         StringBuilder returnSB = new StringBuilder("{");
@@ -84,4 +85,5 @@ public class GuitarString {
         returnSB.append("}");
         return returnSB.toString();
     }
+    */
 }
