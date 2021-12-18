@@ -1,11 +1,11 @@
 import java.util.ArrayList;
 
 public class GuitarHero {
-    public static boolean hasKey(String keyboard, char key) {
+    private static boolean hasKey(String keyboard, char key) {
         return keyboard.indexOf(key) >= 0;
     }
 
-    public static ArrayList<synthesizer.GuitarString> createKeyboard(String keyboard) {
+    private static ArrayList<synthesizer.GuitarString> createKeyboard(String keyboard) {
         ArrayList<synthesizer.GuitarString> strings = new ArrayList<>();
         for (int i = 0; i < keyboard.length(); i += 1) {
             double freq = 440 * Math.pow(2, (i - 24) / (double) 12);
