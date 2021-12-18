@@ -32,47 +32,24 @@ public class HexWorld {
     }
 
     /**
-     * Get the maximum width of the hexagon.
-     */
-    private static int getWidthOfShape(int size) {
-        int widthOfShape = size;
-        for (int i = 0; i < size - 1; i += 1) {
-            widthOfShape += 2;
-        }
-        return widthOfShape;
-    }
-
-    /**
-     * Get the maximum height of the hexagon
-     */
-    private static int getHeightOfShape(int size) {
-        return 2 * size;
-    }
-
-    /**
      * Draw the left part of the hexagon
      */
     private static void fillLeftPart(TETile[][] world, Position p, int s, TETile t) {
-        int start = s - 1 + p.y;
-        int len = 2;
-        for (int i = p.x; i < s - 1 + p.x; i += 1) {
-            for(int j = start; j < start + len; j += 1) {
-                world[i][j] = t;
+        for (int i = 0; i < s - 1; i += 1) {
+            for(int j = s - 1 - i; j < s + i + 1; j += 1) {
+                world[i + p.x][j + p.y] = t;
             }
-            start -= 1;
-            len += 2;
         }
     }
 
     /**
      * Draw the middle part of the hexagon
      */
-    private static void fillMidPart(TETile[][] world, Position p, int s, int heightOfShape, TETile t) {
-        int start = p.y;
-        int len = heightOfShape;
-        for (int i = s - 1 + p.x; i < 2 * s - 1 + p.x; i += 1) {
-            for (int j = start; j < start + len; j += 1) {
-                world[i][j] = t;
+    private static void fillMidPart(TETile[][] world, Position p, int s, TETile t) {
+        int heightOfShape = 2 * s;
+        for (int i = s - 1; i < 2 * s - 1; i += 1) {
+            for (int j = 0; j < heightOfShape; j += 1) {
+                world[i + p.x][j + p.y] = t;
             }
         }
     }
@@ -80,15 +57,13 @@ public class HexWorld {
     /**
      * Draw the right port of the hexagon
      */
-    private static void fillRightPart(TETile[][] world, Position p, int s, int heightOfShape, int widthOfShape, TETile t) {
-        int start = 1 + p.y;
-        int len = heightOfShape - 2;
-        for (int i = 2 * s - 1 + p.x; i < widthOfShape + p.x; i += 1) {
-            for (int j = start; j < start + len; j += 1) {
-                world[i][j] = t;
+    private static void fillRightPart(TETile[][] world, Position p, int s, TETile t) {
+
+        int widthOfShape = 3 * s - 2;
+        for (int i = 2 * s - 1; i < widthOfShape; i += 1) {
+            for (int j = i - 2 * (s - 1); j < 4 * s - i - 2; j += 1) {
+                world[i + p.x][j + p.y] = t;
             }
-            start += 1;
-            len -= 2;
         }
     }
 
@@ -96,16 +71,13 @@ public class HexWorld {
      * draw and add an hexagon to the window screen.
      */
     public static void addHexagon(TETile[][] world, Position p, int s, TETile t) {
-        int widthOfShape = getWidthOfShape(s);
-        int heightOfShape = getHeightOfShape(s);
-
         fillLeftPart(world, p, s, t);
-        fillMidPart(world, p, s, heightOfShape, t);
-        fillRightPart(world, p, s, heightOfShape, widthOfShape, t);
+        fillMidPart(world, p, s, t);
+        fillRightPart(world, p, s, t);
     }
 
     /**
-     * draw 19 hexagons as shown on the web page.
+     * draw and add 19 hexagons as shown on the web page.
      */
     public static void addMulHexagons(TETile[][] world, Position p, int s) {
         int yPosInterval = s;
