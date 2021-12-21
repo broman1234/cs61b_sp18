@@ -37,14 +37,17 @@ public class Game {
         if (input.charAt(0) != 'N' || input.charAt(input.length() - 1) != 'S') {
             throw new RuntimeException("input should start with N and end with S");
         }
-
+        */
 
         StringBuilder returnSB = new StringBuilder();
         for (int i = 0; i < input.length(); i += 1) {
+            if (input.charAt(0) == 'N' || input.charAt(0) == 'n' || input.charAt(0) == 'S' || input.charAt(0) == 's') {
+                continue;
+            }
             returnSB.append(input.charAt(i));
         }
-        */
-        MapGenerator.SEED = Integer.parseInt(input);
+
+        MapGenerator.SEED = Integer.parseInt(returnSB.toString());
         MapGenerator.RANDOM = new Random(MapGenerator.SEED);
         MapGenerator.WIDTH = Game.WIDTH;
         MapGenerator.HEIGHT = Game.HEIGHT;
