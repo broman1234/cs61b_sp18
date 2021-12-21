@@ -3,30 +3,26 @@ package byog.Core;
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
-
-import java.awt.event.TextListener;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
 
 public class MapGenerator {
-    static final int WIDTH = 80;
-    static final int HEIGHT = 35;
+    static int WIDTH = 80;
+    static int HEIGHT = 35;
 
-    static final long SEED = 2871323;
-    static final Random RANDOM = new Random(SEED);
-
+    static long SEED = 1;
+    static Random RANDOM = new Random(SEED);
 
     // 1. how to generate a single rectangle of random size;
     //    room[i][j]
-    //    hallway[i][j]: i == 0 or j == 0
+    //    hallway[i][j]
     //    * i and j should be random;
     //    * position: topright.x < world.width && topright.y < world.height &&
     //               bottomleft.x > 0 && bottomleft.y > 0;
     // 2. how to prevent two rectangles overlapping;
     //    * bottomleft1.x > topright2.x || bottomleft1.y > topright2.y
     //    || topright1.x < bottomleft2.x || topright1.y < bottomleft2.y
-    // 3. a room can be connected to boths rooms and hallways.
+    // 3. a room can be connected to both rooms and hallways.
     //    a hallway can be connected to both rooms and hallways.
     // 4. a room --> a room or a hallway
     //    * use random for each side of a room to decide if that side should connect to
@@ -40,8 +36,7 @@ public class MapGenerator {
     //      it has to meet the requirement:
     //      on top and bottom side of the parent room, bottomleft.x < connectPoint.x && topright.x > connectPoint.x
     //      on left and right side of the parent room, bottomleft.y < connectPoint.y && topright.y > connectPoint.y
-    // 5. how to generate a hallway: consider two types of hallway: ___, |.
-    // 6. a hallway --> a room or a hallway:
+    // 5. a hallway --> a room or a hallway:
     //    * use random for each side of a room to decide if that side should connect to
     //      a room or a hallway.
     //    * find the connecting point on chosen sides of the room for
@@ -50,8 +45,6 @@ public class MapGenerator {
     //      to connect with the room.
     //    * generate the room or the hallway,
 
-    // process:
-    // 1. generate and add a single room.
     public static void addSpace(TETile[][] world, SquareSpace space) {
         for (int i = 0; i < space.getWidth(); i += 1) {
             for (int j = 0; j < space.getHeight(); j += 1) {
@@ -76,6 +69,8 @@ public class MapGenerator {
         return RANDOM.nextInt(max - min + 1) + min;
     }
 
+    /** use random to decide which type of object (room or hallway)
+    to connect to the current room(hallway). */
     public static boolean isRoom() {
         int shapeNum = RANDOM.nextInt(2);
         return shapeNum == 1;
@@ -100,18 +95,29 @@ public class MapGenerator {
         }
     }
 
+    public static void setupRoom(Room room, Position prevConnectPoint, int side) {
+        room.p = currentRoomPos(room, prevConnectPoint, side);
+        room.bottomLeft = room.setBottomLeft(room.p);
+        room.topRight = room.setTopRight(room.p, room.width, room.height);
+    }
 
     public static void addMultiRoom(TETile[][] world, Position prevConnectPoint, int side, ArrayList<SquareSpace> spaceBuilt) {
         Room currentRoom = new Room();
-        currentRoom.p = currentRoomPos(currentRoom, prevConnectPoint, side);
-        currentRoom.bottomLeft = currentRoom.setBottomLeft(currentRoom.p);
-        currentRoom.topRight = currentRoom.setTopRight(currentRoom.p, currentRoom.width, currentRoom.height);
+        setupRoom(currentRoom, prevConnectPoint, side);
+        int i = 0;
+        while (!canAdd(currentRoom, spaceBuilt) && i < 2) {
+            currentRoom = new Room();
+            currentRoom.p = currentRoomPos(currentRoom, prevConnectPoint, side);
+            currentRoom.bottomLeft = currentRoom.setBottomLeft(currentRoom.p);
+            currentRoom.topRight = currentRoom.setTopRight(currentRoom.p, currentRoom.width, currentRoom.height);
+            i += 1;
+        }
         if (canAdd(currentRoom, spaceBuilt)) {
             addSpace(world, currentRoom);
             world[prevConnectPoint.x][prevConnectPoint.y] = Tileset.FLOOR;
             world[currentRoom.actualConnectPos.x][currentRoom.actualConnectPos.y] = Tileset.FLOOR;
 
-            // add the current room into the space arraylist.
+            // add the room into the space arraylist.
             spaceBuilt.add(currentRoom);
 
             int validS = currentRoom.randomSideExpt();
@@ -119,8 +125,7 @@ public class MapGenerator {
 
             for (int s : validSides) {
                 Position connectPoint = currentRoom.connectPoint(currentRoom.p, s);
-                // world[connectPoint.x][connectPoint.y] = Tileset.FLOOR;
-                // recursion.
+                // recursive method.
                 addMulti(world, connectPoint, s, spaceBuilt);
             }
         }
@@ -142,26 +147,44 @@ public class MapGenerator {
         return true;
     }
 
+    public static void setupHall(Hallway hallway, Position prevConnectPoint, int side) {
+        hallway.p = currentHallPos(hallway, prevConnectPoint, side);
+        hallway.bottomLeft = hallway.setBottomLeft(hallway.p);
+        hallway.topRight = hallway.setTopRight(hallway.p, hallway.width, hallway.height);
+    }
+
     public static void addMultiHallway(TETile[][] world, Position prevConnectPoint, int side, ArrayList<SquareSpace> spaceBuilt) {
+        // create a hallway.
         Hallway currentHall = new Hallway();
-        currentHall.p = currentHallPos(currentHall, prevConnectPoint, side);
-        currentHall.bottomLeft = currentHall.setBottomLeft(currentHall.p);
-        currentHall.topRight = currentHall.setTopRight(currentHall.p, currentHall.width, currentHall.height);
+        setupHall(currentHall, prevConnectPoint, side);
+
+        // if overlapped or out of boundary, try to randomly generate the hallway two more times to meet the requirements.
+        int i = 0;
+        while (!canAdd(currentHall, spaceBuilt) && i < 2) {
+            currentHall = new Hallway();
+            currentHall.p = currentHallPos(currentHall, prevConnectPoint, side);
+            currentHall.bottomLeft = currentHall.setBottomLeft(currentHall.p);
+            currentHall.topRight = currentHall.setTopRight(currentHall.p, currentHall.width, currentHall.height);
+            i += 1;
+        }
+
+        // if not overlapped or out of boundary, add the hallway created above.
         if (canAdd(currentHall, spaceBuilt)) {
             addSpace(world, currentHall);
             world[prevConnectPoint.x][prevConnectPoint.y] = Tileset.FLOOR;
             world[currentHall.actualConnectPos.x][currentHall.actualConnectPos.y] = Tileset.FLOOR;
 
-            // add the current room into the space arraylist.
+            // add the hallway into the space arraylist.
             spaceBuilt.add(currentHall);
 
+            // decide which sides of the hallway to have branches.
             int validS = currentHall.randomSideExpt();
             ArrayList<Integer> validSides = validSides(currentHall, validS);
 
+            // use recursion to add rooms or hallways for each valid side.
             for (int s : validSides) {
                 Position connectPoint = currentHall.connectPoint(currentHall.p, s);
-                // world[connectPoint.x][connectPoint.y] = Tileset.FLOOR;
-                // recursion.
+                // recursive method.
                 addMulti(world, connectPoint, s, spaceBuilt);
             }
         }
@@ -241,18 +264,8 @@ public class MapGenerator {
         return currentPos;
     }
 
-    // 2. find the connecting point on random sides of the room for
-    //    adding new rooms or hallways.
-    // 3. use random to decide which type of object (room or hallway)
-    //    to connect with the room.
-    // 4. generate the room or the hallway, it has to meet the requirement:
-    //    on top and bottom side of the parent room, bottomleft.x < connectPoint.x && topright.x > connectPoint.x
-    //    on left and right side of the parent room, bottomleft.y < connectPoint.y && topright.y > connectPoint.y
-    // 5.
-    public static void main(String[] args) {
+    public static TETile[][] addWorld() {
         // 1. add the background.
-        TERenderer ter = new TERenderer();
-        ter.initialize(WIDTH, HEIGHT);
         TETile[][] world = new TETile[WIDTH][HEIGHT];
         for (int x = 0; x < WIDTH; x += 1) {
             for (int y = 0; y < HEIGHT; y += 1) {
@@ -279,16 +292,21 @@ public class MapGenerator {
         int side = entrance.randomSideExpt();
         ArrayList<Integer> validSides = validSides(entrance, side);
 
-        // 5. use recursion to create branch rooms or hallways.
-
+        // 5. use recursion to create room(hallway) branches for the entrance on each valid side.
         for (int s : validSides) {
             Position connectPoint = entrance.connectPoint(entrance.p, s);
-            // world[connectPoint.x][connectPoint.y] = Tileset.FLOOR;
             // recursive method.
             addMulti(world, connectPoint, s, spaceBuilt);
         }
+        return world;
+    }
 
-        //addMultiRoom(world, connectPoint, side, spaceBuilt);
+    public static void main(String[] args) {
+        TERenderer ter = new TERenderer();
+        ter.initialize(WIDTH, HEIGHT);
+        SEED = 767546;
+        RANDOM = new Random(SEED);
+        TETile[][] world = addWorld();
         ter.renderFrame(world);
     }
 }

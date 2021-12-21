@@ -39,14 +39,6 @@ public class Hallway implements SquareSpace{
         return height;
     }
 
-    public int getUsedSide() {
-        return usedSide;
-    }
-
-    public Position getActualConnectPos() {
-        return actualConnectPos;
-    }
-
     public Position getPosition() {
         return p;
     }

@@ -3,6 +3,9 @@ package byog.Core;
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 public class Game {
     TERenderer ter = new TERenderer();
     /* Feel free to change the width and height. */
@@ -31,8 +34,18 @@ public class Game {
         // TODO: Fill out this method to run the game using the input passed in,
         // and return a 2D tile representation of the world that would have been
         // drawn if the same inputs had been given to playWithKeyboard().
-
-        TETile[][] finalWorldFrame = null;
+        if (input.charAt(0) != 'N' || input.charAt(input.length() - 1) != 'S') {
+            throw new RuntimeException("input should start with N and end with S");
+        }
+        StringBuilder returnSB = new StringBuilder();
+        for (int i = 0; i < input.length(); i += 1) {
+            if (input.charAt(i) != 'N' && input.charAt(i) != 'S') {
+                returnSB.append(input.charAt(i));
+            }
+        }
+        MapGenerator.SEED = Integer.parseInt(returnSB.toString());
+        MapGenerator.RANDOM = new Random(MapGenerator.SEED);
+        TETile[][] finalWorldFrame = MapGenerator.addWorld();
         return finalWorldFrame;
     }
 }

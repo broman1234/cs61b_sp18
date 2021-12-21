@@ -9,10 +9,6 @@ public interface SquareSpace {
 
     int getHeight();
 
-    int getUsedSide();
-
-    Position getActualConnectPos();
-
     Position getPosition();
 
     Position setBottomLeft(Position p);
