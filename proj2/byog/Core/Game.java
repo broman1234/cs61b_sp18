@@ -38,16 +38,16 @@ public class Game {
             throw new RuntimeException("input should start with N and end with S");
         }
 
-         */
+
         StringBuilder returnSB = new StringBuilder();
-        for (int i = 1; i < input.length(); i += 1) {
-            if (input.charAt(i) == 's' || input.charAt(i) == 'S') {
-                break;
-            }
+        for (int i = 0; i < input.length(); i += 1) {
             returnSB.append(input.charAt(i));
         }
-        MapGenerator.SEED = Integer.parseInt(returnSB.toString());
+        */
+        MapGenerator.SEED = Integer.parseInt(input);
         MapGenerator.RANDOM = new Random(MapGenerator.SEED);
+        MapGenerator.WIDTH = Game.WIDTH;
+        MapGenerator.HEIGHT = Game.HEIGHT;
         TETile[][] finalWorldFrame = MapGenerator.addWorld();
         return finalWorldFrame;
     }
