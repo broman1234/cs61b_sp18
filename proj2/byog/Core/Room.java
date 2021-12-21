@@ -1,7 +1,5 @@
 package byog.Core;
 
-import java.nio.channels.Pipe;
-
 public class Room implements SquareSpace{
     int maxSide = 8;
     int minSide = 4;
