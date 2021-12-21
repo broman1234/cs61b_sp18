@@ -19,9 +19,9 @@ public interface SquareSpace {
 
     Position setTopRight(Position position, int w, int h);
 
-    public Position getBottomLeft();
+    Position getBottomLeft();
 
-    public Position getTopRight();
+    Position getTopRight();
 
     int randomSize();
 

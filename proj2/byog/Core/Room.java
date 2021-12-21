@@ -64,7 +64,7 @@ public class Room implements SquareSpace{
     }
 
     public int randomSize() {
-        return MapGenerator.RANDOM.nextInt(maxSide - minSide) + minSide;
+        return MapGenerator.RANDOM.nextInt(maxSide - minSide + 1) + minSide;
     }
 
     public int randomSide() {
