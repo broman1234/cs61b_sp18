@@ -33,14 +33,18 @@ public class Game {
         // TODO: Fill out this method to run the game using the input passed in,
         // and return a 2D tile representation of the world that would have been
         // drawn if the same inputs had been given to playWithKeyboard().
+        /*
         if (input.charAt(0) != 'N' || input.charAt(input.length() - 1) != 'S') {
             throw new RuntimeException("input should start with N and end with S");
         }
+
+         */
         StringBuilder returnSB = new StringBuilder();
-        for (int i = 0; i < input.length(); i += 1) {
-            if (input.charAt(i) != 'N' && input.charAt(i) != 'S') {
-                returnSB.append(input.charAt(i));
+        for (int i = 1; i < input.length(); i += 1) {
+            if (input.charAt(i) == 's' || input.charAt(i) == 'S') {
+                break;
             }
+            returnSB.append(input.charAt(i));
         }
         MapGenerator.SEED = Integer.parseInt(returnSB.toString());
         MapGenerator.RANDOM = new Random(MapGenerator.SEED);

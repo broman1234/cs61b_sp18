@@ -8,7 +8,7 @@ public class MapVisualTest {
         game.ter.initialize(Game.WIDTH, Game.HEIGHT);
         MapGenerator.WIDTH = Game.WIDTH;
         MapGenerator.HEIGHT = Game.HEIGHT;
-        TETile[][] world = game.playWithInputString("N45345S");
+        TETile[][] world = game.playWithInputString("N886S");
         game.ter.renderFrame(world);
     }
 }
