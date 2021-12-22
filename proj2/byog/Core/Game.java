@@ -3,6 +3,7 @@ package byog.Core;
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
 
+import java.io.*;
 import java.util.Random;
 
 public class Game {
@@ -33,25 +34,90 @@ public class Game {
         // TODO: Fill out this method to run the game using the input passed in,
         // and return a 2D tile representation of the world that would have been
         // drawn if the same inputs had been given to playWithKeyboard().
-        /*
-        if (input.charAt(0) != 'N' || input.charAt(input.length() - 1) != 'S') {
-            throw new RuntimeException("input should start with N and end with S");
+        TETile[][] finalWorldFrame = null;
+        if (input.length() == 0) {
+            return finalWorldFrame;
         }
-        */
-
-        StringBuilder returnSB = new StringBuilder();
-        for (int i = 0; i < input.length(); i += 1) {
-            if (input.charAt(0) == 'N' || input.charAt(0) == 'n' || input.charAt(0) == 'S' || input.charAt(0) == 's') {
-                continue;
-            }
-            returnSB.append(input.charAt(i));
+        input = toLower(input);
+        char firstChar = input.charAt(0);
+        char secondTolastChar = input.charAt(input.length() - 2);
+        char lastChar = input.charAt(input.length() - 1);
+        if (firstChar == 'n') {
+            finalWorldFrame = newGame(input);
+        } else if (firstChar == 'l') {
+            finalWorldFrame = loadGame();
+        } else if (lastChar == 'q') {
+            System.exit(0);
+        } else {
+            finalWorldFrame = newGame(input);
         }
-
-        MapGenerator.SEED = Integer.parseInt(returnSB.toString());
-        MapGenerator.RANDOM = new Random(MapGenerator.SEED);
-        MapGenerator.WIDTH = Game.WIDTH;
-        MapGenerator.HEIGHT = Game.HEIGHT;
-        TETile[][] finalWorldFrame = MapGenerator.addWorld();
+        if (secondTolastChar == ':' && lastChar == 'q') {
+            saveGame(finalWorldFrame);
+            System.exit(0);
+        }
         return finalWorldFrame;
     }
+
+    private String toLower(String input) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < input.length(); i += 1) {
+            char ch = input.charAt(i);
+            if (Character.isUpperCase(ch)) {
+                sb.append(Character.toLowerCase(ch));
+            } else {
+                sb.append(ch);
+            }
+        }
+        return sb.toString();
+    }
+
+    private long getSeed(String input) {
+        StringBuilder sb = new StringBuilder();
+        char firstChar = input.charAt(0);
+        if (firstChar != 'n' && firstChar != 'l' && firstChar != 'q') {
+            sb.append(firstChar);
+        }
+        for (int i = 1; i < input.length(); i += 1) {
+            if (input.charAt(i) == 's') {
+                break;
+            }
+            sb.append(input.charAt(i));
+        }
+        long seed = Long.parseLong(sb.toString());
+        return seed;
+    }
+
+    private TETile[][] newGame(String input) {
+        long seed = getSeed(input);
+        TETile[][] finalWorldFrame = MapGenerator.addWorld(WIDTH, HEIGHT, seed);
+        return finalWorldFrame;
+    }
+
+    private TETile[][] loadGame() {
+        TETile[][] finalWorldFrame = getSavedGame();
+        return finalWorldFrame;
+    }
+
+    private void saveGame(TETile[][] finalWorldFrame) {
+        try {
+            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("savefile.txt"));
+            out.writeObject(finalWorldFrame);
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private TETile[][] getSavedGame() {
+        TETile[][] finalWorldFrame = null;
+        try {
+            ObjectInputStream in = new ObjectInputStream(new FileInputStream("savefile.txt"));
+            finalWorldFrame = (TETile[][]) in.readObject();
+            in.close();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return finalWorldFrame;
+    }
+
 }

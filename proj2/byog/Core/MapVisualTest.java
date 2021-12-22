@@ -7,7 +7,7 @@ public class MapVisualTest {
         Game game = new Game();
         game.ter.initialize(Game.WIDTH, Game.HEIGHT);
 
-        TETile[][] world = game.playWithInputString("886");
+        TETile[][] world = game.playWithInputString("");
         game.ter.renderFrame(world);
     }
 }

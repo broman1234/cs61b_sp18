@@ -8,7 +8,7 @@ import java.util.Random;
 
 public class MapGenerator {
     static int WIDTH = 80;
-    static int HEIGHT = 35;
+    static int HEIGHT = 30;
 
     static long SEED = 1;
     static Random RANDOM = new Random(SEED);
@@ -264,7 +264,15 @@ public class MapGenerator {
         return currentPos;
     }
 
-    public static TETile[][] addWorld() {
+    public static void setupWorld(int width, int height, long seed) {
+        SEED = seed;
+        RANDOM = new Random(SEED);
+        WIDTH = width;
+        HEIGHT = height;
+    }
+
+    public static TETile[][] addWorld(int width, int height, long seed) {
+        setupWorld(width, height, seed);
         // 1. add the background.
         TETile[][] world = new TETile[WIDTH][HEIGHT];
         for (int x = 0; x < WIDTH; x += 1) {
@@ -275,8 +283,8 @@ public class MapGenerator {
 
         // 2. add the entrance room and the locked door.
         Room entrance = new Room();
-        int xPos = randomPos(25, 45);
-        int yPos = randomPos(5, 10);
+        int xPos = randomPos(WIDTH / 4, (WIDTH * 3 / 4));
+        int yPos = randomPos(HEIGHT / 6, HEIGHT / 3);
         entrance.p = new Position(xPos, yPos);
         entrance.bottomLeft = entrance.setBottomLeft(entrance.p);
         entrance.topRight = entrance.setTopRight(entrance.p, entrance.width, entrance.height);
@@ -304,9 +312,7 @@ public class MapGenerator {
     public static void main(String[] args) {
         TERenderer ter = new TERenderer();
         ter.initialize(WIDTH, HEIGHT);
-        SEED = 767546;
-        RANDOM = new Random(SEED);
-        TETile[][] world = addWorld();
+        TETile[][] world = addWorld(80, 30, 886);
         ter.renderFrame(world);
     }
 }
