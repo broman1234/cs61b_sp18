@@ -9,41 +9,9 @@ import java.util.Random;
 public class MapGenerator {
     static int WIDTH = 80;
     static int HEIGHT = 30;
-
+    static final int GENERATIONLIMIT = 5;
     static long SEED = 1;
     static Random RANDOM = new Random(SEED);
-
-    // 1. how to generate a single rectangle of random size;
-    //    room[i][j]
-    //    hallway[i][j]
-    //    * i and j should be random;
-    //    * position: topright.x < world.width && topright.y < world.height &&
-    //               bottomleft.x > 0 && bottomleft.y > 0;
-    // 2. how to prevent two rectangles overlapping;
-    //    * bottomleft1.x > topright2.x || bottomleft1.y > topright2.y
-    //    || topright1.x < bottomleft2.x || topright1.y < bottomleft2.y
-    // 3. a room can be connected to both rooms and hallways.
-    //    a hallway can be connected to both rooms and hallways.
-    // 4. a room --> a room or a hallway
-    //    * use random for each side of a room to decide if that side should connect to
-    //      a room or a hallway.
-    //    * find the connecting point on chosen sides of the room for
-    //      adding new rooms or hallways.
-    //    * use random to decide which type of object (room or hallway)
-    //      to connect with the room.
-    //    * generate the room or the hallway,
-    //      randomly generate the connecting position on the shape, calculate the corner position of the shape,
-    //      it has to meet the requirement:
-    //      on top and bottom side of the parent room, bottomleft.x < connectPoint.x && topright.x > connectPoint.x
-    //      on left and right side of the parent room, bottomleft.y < connectPoint.y && topright.y > connectPoint.y
-    // 5. a hallway --> a room or a hallway:
-    //    * use random for each side of a room to decide if that side should connect to
-    //      a room or a hallway.
-    //    * find the connecting point on chosen sides of the room for
-    //      adding new rooms or hallways.
-    //    * use random to decide which type of object (room or hallway)
-    //      to connect with the room.
-    //    * generate the room or the hallway,
 
     public static void addSpace(TETile[][] world, SquareSpace space) {
         for (int i = 0; i < space.getWidth(); i += 1) {
@@ -105,23 +73,19 @@ public class MapGenerator {
         Room currentRoom = new Room();
         setupRoom(currentRoom, prevConnectPoint, side);
         int i = 0;
-        while (!canAdd(currentRoom, spaceBuilt) && i < 2) {
+        while (!canAdd(currentRoom, spaceBuilt) && i < GENERATIONLIMIT) {
             currentRoom = new Room();
-            currentRoom.p = currentRoomPos(currentRoom, prevConnectPoint, side);
-            currentRoom.bottomLeft = currentRoom.setBottomLeft(currentRoom.p);
-            currentRoom.topRight = currentRoom.setTopRight(currentRoom.p, currentRoom.width, currentRoom.height);
+            setupRoom(currentRoom, prevConnectPoint, side);
             i += 1;
         }
         if (canAdd(currentRoom, spaceBuilt)) {
             addSpace(world, currentRoom);
-            world[prevConnectPoint.x][prevConnectPoint.y] = Tileset.FLOOR;
-            world[currentRoom.actualConnectPos.x][currentRoom.actualConnectPos.y] = Tileset.FLOOR;
+            connectThroughWalls(world, currentRoom, prevConnectPoint);
 
             // add the room into the space arraylist.
             spaceBuilt.add(currentRoom);
 
-            int validS = currentRoom.randomSideExpt();
-            ArrayList<Integer> validSides = validSides(currentRoom, validS);
+            ArrayList<Integer> validSides = sideWithConnection(currentRoom);
 
             for (int s : validSides) {
                 Position connectPoint = currentRoom.connectPoint(currentRoom.p, s);
@@ -131,16 +95,22 @@ public class MapGenerator {
         }
     }
 
+    public static boolean isOverlap(SquareSpace space, Position bottomLeft, Position topRight) {
+        return !(space.getBottomLeft().x > topRight.x || space.getBottomLeft().y > topRight.y || space.getTopRight().x < bottomLeft.x || space.getTopRight().y < bottomLeft.y);
+    }
+
+    public static boolean isOutOfBoundary(SquareSpace space) {
+        return !(space.getTopRight().x < WIDTH && space.getTopRight().y < HEIGHT && space.getBottomLeft().x > 0 && space.getBottomLeft().y > 0);
+    }
+
     public static boolean canAdd(SquareSpace space, ArrayList<SquareSpace> spaceBuilt) {
         for (SquareSpace sp: spaceBuilt) {
             Position bottomLeft = sp.getBottomLeft();
             Position topRight = sp.getTopRight();
-            if (!(space.getBottomLeft().x > topRight.x || space.getBottomLeft().y > topRight.y ||
-                    space.getTopRight().x < bottomLeft.x || space.getTopRight().y < bottomLeft.y)) {
+            if (isOverlap(space, bottomLeft, topRight)) {
                 return false;
             }
-            if (!(space.getTopRight().x < WIDTH && space.getTopRight().y < HEIGHT &&
-                    space.getBottomLeft().x > 0 && space.getBottomLeft().y > 0)) {
+            if (isOutOfBoundary(space)) {
                 return false;
             }
         }
@@ -153,6 +123,11 @@ public class MapGenerator {
         hallway.topRight = hallway.setTopRight(hallway.p, hallway.width, hallway.height);
     }
 
+    public static void connectThroughWalls(TETile[][] world, SquareSpace space, Position prevConnectPoint) {
+        world[prevConnectPoint.x][prevConnectPoint.y] = Tileset.FLOOR;
+        world[space.getActualConnectPos().x][space.getActualConnectPos().y] = Tileset.FLOOR;
+    }
+
     public static void addMultiHallway(TETile[][] world, Position prevConnectPoint, int side, ArrayList<SquareSpace> spaceBuilt) {
         // create a hallway.
         Hallway currentHall = new Hallway();
@@ -160,26 +135,22 @@ public class MapGenerator {
 
         // if overlapped or out of boundary, try to randomly generate the hallway two more times to meet the requirements.
         int i = 0;
-        while (!canAdd(currentHall, spaceBuilt) && i < 2) {
+        while (!canAdd(currentHall, spaceBuilt) && i < GENERATIONLIMIT) {
             currentHall = new Hallway();
-            currentHall.p = currentHallPos(currentHall, prevConnectPoint, side);
-            currentHall.bottomLeft = currentHall.setBottomLeft(currentHall.p);
-            currentHall.topRight = currentHall.setTopRight(currentHall.p, currentHall.width, currentHall.height);
+            setupHall(currentHall, prevConnectPoint, side);
             i += 1;
         }
 
         // if not overlapped or out of boundary, add the hallway created above.
         if (canAdd(currentHall, spaceBuilt)) {
             addSpace(world, currentHall);
-            world[prevConnectPoint.x][prevConnectPoint.y] = Tileset.FLOOR;
-            world[currentHall.actualConnectPos.x][currentHall.actualConnectPos.y] = Tileset.FLOOR;
+            connectThroughWalls(world, currentHall, prevConnectPoint);
 
             // add the hallway into the space arraylist.
             spaceBuilt.add(currentHall);
 
             // decide which sides of the hallway to have branches.
-            int validS = currentHall.randomSideExpt();
-            ArrayList<Integer> validSides = validSides(currentHall, validS);
+            ArrayList<Integer> validSides = sideWithConnection(currentHall);
 
             // use recursion to add rooms or hallways for each valid side.
             for (int s : validSides) {
@@ -190,77 +161,70 @@ public class MapGenerator {
         }
     }
 
+    public static Position actualConnectPos(Position prevConnectPoint, int usedSide) {
+        Position actualPos = null;
+        if (usedSide == 3) {
+            actualPos = new Position(prevConnectPoint.x, prevConnectPoint.y - 1);
+        }
+        if (usedSide == 4) {
+            actualPos = new Position(prevConnectPoint.x + 1, prevConnectPoint.y);
+        }
+        if (usedSide == 1) {
+            actualPos = new Position(prevConnectPoint.x, prevConnectPoint.y + 1);
+        }
+        if (usedSide == 2) {
+            actualPos = new Position(prevConnectPoint.x - 1, prevConnectPoint.y);
+        }
+        return actualPos;
+    }
+
     public static Position currentHallPos(Hallway currentHall, Position prevConnectPoint, int sideNum) {
         Position currentPos = new Position(0, 0);
         if (sideNum == 1) {
             currentHall.usedSide = 3;
-            Position connectPos = currentHall.connectPoint(currentPos, currentHall.usedSide);
-            Position actualConnectPos = new Position(prevConnectPoint.x, prevConnectPoint.y - 1);
-            currentHall.actualConnectPos = actualConnectPos;
-
-            currentPos = new Position(actualConnectPos.x - connectPos.x, actualConnectPos.y - connectPos.y);
         }
         if (sideNum == 2) {
             currentHall.usedSide = 4;
-            Position connectPos = currentHall.connectPoint(currentPos, currentHall.usedSide);
-            Position actualConnectPos = new Position(prevConnectPoint.x + 1, prevConnectPoint.y);
-            currentHall.actualConnectPos = actualConnectPos;
-
-            currentPos = new Position(actualConnectPos.x - connectPos.x, actualConnectPos.y - connectPos.y);
         }
         if (sideNum == 3) {
             currentHall.usedSide = 1;
-            Position connectPos = currentHall.connectPoint(currentPos, currentHall.usedSide);
-            Position actualConnectPos = new Position(prevConnectPoint.x, prevConnectPoint.y + 1);
-            currentHall.actualConnectPos = actualConnectPos;
-
-            currentPos = new Position(actualConnectPos.x - connectPos.x, actualConnectPos.y - connectPos.y);
         }
         if (sideNum == 4) {
             currentHall.usedSide = 2;
-            Position connectPos = currentHall.connectPoint(currentPos, currentHall.usedSide);
-            Position actualConnectPos = new Position(prevConnectPoint.x - 1, prevConnectPoint.y);
-            currentHall.actualConnectPos = actualConnectPos;
-
-            currentPos = new Position(actualConnectPos.x - connectPos.x, actualConnectPos.y - connectPos.y);
         }
+        currentPos = hallCurrentPos(currentHall, currentPos, prevConnectPoint);
         return currentPos;
+    }
+
+    public static Position hallCurrentPos(Hallway hallway, Position originPos, Position prevConnectPoint) {
+        Position connectPos = hallway.connectPoint(originPos, hallway.usedSide);
+        Position actualConnectPos = actualConnectPos(prevConnectPoint, hallway.usedSide);
+        hallway.actualConnectPos = actualConnectPos;
+        return new Position(actualConnectPos.x - connectPos.x, actualConnectPos.y - connectPos.y);
+    }
+
+    public static Position roomCurrentPos(Room room, Position originPos, Position prevConnectPoint) {
+        Position connectPos = room.connectPoint(originPos, room.usedSide);
+        Position actualConnectPos = actualConnectPos(prevConnectPoint, room.usedSide);
+        room.actualConnectPos = actualConnectPos;
+        return new Position(actualConnectPos.x - connectPos.x, actualConnectPos.y - connectPos.y);
     }
 
     public static Position currentRoomPos(Room currentRoom, Position prevConnectPoint, int sideNum) {
         Position currentPos = new Position(0, 0);
         if (sideNum == 1) {
             currentRoom.usedSide = 3;
-            Position connectPos = currentRoom.connectPoint(currentPos, currentRoom.usedSide);
-            Position actualConnectPos = new Position(prevConnectPoint.x, prevConnectPoint.y - 1);
-            currentRoom.actualConnectPos = actualConnectPos;
-
-            currentPos = new Position(actualConnectPos.x - connectPos.x, actualConnectPos.y - connectPos.y);
         }
         if (sideNum == 2) {
             currentRoom.usedSide = 4;
-            Position connectPos = currentRoom.connectPoint(currentPos, currentRoom.usedSide);
-            Position actualConnectPos = new Position(prevConnectPoint.x + 1, prevConnectPoint.y);
-            currentRoom.actualConnectPos = actualConnectPos;
-
-            currentPos = new Position(actualConnectPos.x - connectPos.x, actualConnectPos.y - connectPos.y);
         }
         if (sideNum == 3) {
             currentRoom.usedSide = 1;
-            Position connectPos = currentRoom.connectPoint(currentPos, currentRoom.usedSide);
-            Position actualConnectPos = new Position(prevConnectPoint.x, prevConnectPoint.y + 1);
-            currentRoom.actualConnectPos = actualConnectPos;
-
-            currentPos = new Position(actualConnectPos.x - connectPos.x, actualConnectPos.y - connectPos.y);
         }
         if (sideNum == 4) {
             currentRoom.usedSide = 2;
-            Position connectPos = currentRoom.connectPoint(currentPos, currentRoom.usedSide);
-            Position actualConnectPos = new Position(prevConnectPoint.x - 1, prevConnectPoint.y);
-            currentRoom.actualConnectPos = actualConnectPos;
-
-            currentPos = new Position(actualConnectPos.x - connectPos.x, actualConnectPos.y - connectPos.y);
         }
+        currentPos = roomCurrentPos(currentRoom, currentPos, prevConnectPoint);
         return currentPos;
     }
 
@@ -271,34 +235,49 @@ public class MapGenerator {
         HEIGHT = height;
     }
 
-    public static TETile[][] addWorld(int width, int height, long seed) {
-        setupWorld(width, height, seed);
-        // 1. add the background.
-        TETile[][] world = new TETile[WIDTH][HEIGHT];
+    public static void addBackground(TETile[][] world) {
         for (int x = 0; x < WIDTH; x += 1) {
             for (int y = 0; y < HEIGHT; y += 1) {
                 world[x][y] = Tileset.NOTHING;
             }
         }
+    }
 
-        // 2. add the entrance room and the locked door.
-        Room entrance = new Room();
+    public static Position entrancePos() {
         int xPos = randomPos(WIDTH / 4, (WIDTH * 3 / 4));
         int yPos = randomPos(HEIGHT / 6, HEIGHT / 3);
-        entrance.p = new Position(xPos, yPos);
+        return new Position(xPos, yPos);
+    }
+
+    public static void setupEntrance(Room entrance) {
+        entrance.p = entrancePos();
         entrance.bottomLeft = entrance.setBottomLeft(entrance.p);
         entrance.topRight = entrance.setTopRight(entrance.p, entrance.width, entrance.height);
+    }
+
+    public static ArrayList<Integer> sideWithConnection(SquareSpace space) {
+        int side = space.randomSideExpt();
+        return validSides(space, side);
+    }
+
+    public static TETile[][] addWorld(int width, int height, long seed) {
+        setupWorld(width, height, seed);
+        // 1. add the background.
+        TETile[][] world = new TETile[WIDTH][HEIGHT];
+        addBackground(world);
+        // 2. add the entrance room and the locked door.
+        Room entrance = new Room();
+        setupEntrance(entrance);
         addSpace(world, entrance);
         addLockDoor(world, entrance);
 
-        // 3. store the entrance into a space arraylist
+        // 3. store the entrance into a new space arraylist
         ArrayList<SquareSpace> spaceBuilt = new ArrayList<> ();
         spaceBuilt.add(entrance);
 
         // 4. at least one side to have connecting point.
         entrance.usedSide = 1;
-        int side = entrance.randomSideExpt();
-        ArrayList<Integer> validSides = validSides(entrance, side);
+        ArrayList<Integer> validSides = sideWithConnection(entrance);
 
         // 5. use recursion to create room(hallway) branches for the entrance on each valid side.
         for (int s : validSides) {

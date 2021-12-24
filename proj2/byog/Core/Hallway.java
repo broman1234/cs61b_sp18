@@ -42,6 +42,8 @@ public class Hallway implements SquareSpace{
     public Position getPosition() {
         return p;
     }
+
+
     public Position setBottomLeft(Position p) {
         return p;
     }
@@ -58,6 +60,10 @@ public class Hallway implements SquareSpace{
 
     public Position getTopRight() {
         return topRight;
+    }
+
+    public Position getActualConnectPos() {
+        return actualConnectPos;
     }
 
     public int randomSize() {

@@ -19,6 +19,8 @@ public interface SquareSpace {
 
     Position getTopRight();
 
+    Position getActualConnectPos();
+
     int randomSize();
 
     int randomSide();

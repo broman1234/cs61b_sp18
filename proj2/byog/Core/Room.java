@@ -53,6 +53,10 @@ public class Room implements SquareSpace{
         return topRight;
     }
 
+    public Position getActualConnectPos() {
+        return actualConnectPos;
+    }
+
     public int randomSize() {
         return MapGenerator.RANDOM.nextInt(maxSide - minSide + 1) + minSide;
     }

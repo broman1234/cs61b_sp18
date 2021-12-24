@@ -36,11 +36,11 @@ public class Game {
         // drawn if the same inputs had been given to playWithKeyboard().
         TETile[][] finalWorldFrame = null;
         if (input.length() == 0) {
-            return finalWorldFrame;
+            return null;
         }
         input = toLower(input);
         char firstChar = input.charAt(0);
-        char secondTolastChar = input.charAt(input.length() - 2);
+
         char lastChar = input.charAt(input.length() - 1);
         if (firstChar == 'n') {
             finalWorldFrame = newGame(input);
@@ -51,9 +51,12 @@ public class Game {
         } else {
             finalWorldFrame = newGame(input);
         }
-        if (secondTolastChar == ':' && lastChar == 'q') {
-            saveGame(finalWorldFrame);
-            System.exit(0);
+        if (input.length() >= 2) {
+            char secondTolastChar = input.charAt(input.length() - 2);
+            if (secondTolastChar == ':' && lastChar == 'q') {
+                saveGame(finalWorldFrame);
+                System.exit(0);
+            }
         }
         return finalWorldFrame;
     }
@@ -83,8 +86,7 @@ public class Game {
             }
             sb.append(input.charAt(i));
         }
-        long seed = Long.parseLong(sb.toString());
-        return seed;
+        return Long.parseLong(sb.toString());
     }
 
     private TETile[][] newGame(String input) {
