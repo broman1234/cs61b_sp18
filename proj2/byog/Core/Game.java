@@ -4,13 +4,12 @@ import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
 
 import java.io.*;
-import java.util.Random;
 
 public class Game {
     TERenderer ter = new TERenderer();
     /* Feel free to change the width and height. */
     public static final int WIDTH = 80;
-    public static final int HEIGHT = 30;
+    public static final int HEIGHT = 33;
 
     /**
      * Method used for playing a fresh game. The game should start from the main menu.
@@ -38,21 +37,21 @@ public class Game {
         if (input.length() == 0) {
             return null;
         }
-        input = toLower(input);
-        char firstChar = input.charAt(0);
+        String lowerInput = toLower(input);
+        char firstChar = lowerInput.charAt(0);
 
-        char lastChar = input.charAt(input.length() - 1);
+        char lastChar = lowerInput.charAt(lowerInput.length() - 1);
         if (firstChar == 'n') {
-            finalWorldFrame = newGame(input);
+            finalWorldFrame = newGame(lowerInput);
         } else if (firstChar == 'l') {
             finalWorldFrame = loadGame();
         } else if (lastChar == 'q') {
             System.exit(0);
         } else {
-            finalWorldFrame = newGame(input);
+            finalWorldFrame = newGame(lowerInput);
         }
-        if (input.length() >= 2) {
-            char secondTolastChar = input.charAt(input.length() - 2);
+        if (lowerInput.length() >= 2) {
+            char secondTolastChar = lowerInput.charAt(lowerInput.length() - 2);
             if (secondTolastChar == ':' && lastChar == 'q') {
                 saveGame(finalWorldFrame);
                 System.exit(0);
@@ -91,7 +90,7 @@ public class Game {
 
     private TETile[][] newGame(String input) {
         long seed = getSeed(input);
-        TETile[][] finalWorldFrame = MapGenerator.addWorld(WIDTH, HEIGHT, seed);
+        TETile[][] finalWorldFrame = MapGenerator.addWorld(MapGenerator.WIDTH, MapGenerator.HEIGHT, seed);
         return finalWorldFrame;
     }
 

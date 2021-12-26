@@ -10,7 +10,7 @@ import java.util.Random;
 public class MapGenerator {
     static int WIDTH = 80;
     static int HEIGHT = 30;
-    static final int GENERATIONLIMIT = 20;
+    static final int GENERATIONLIMIT = 30;
     static long SEED = 1;
     static Random RANDOM = new Random(SEED);
 
@@ -242,7 +242,7 @@ public class MapGenerator {
     public static void main(String[] args) {
         TERenderer ter = new TERenderer();
         ter.initialize(WIDTH, HEIGHT);
-        TETile[][] world = addWorld(80, 30, 2873123);
+        TETile[][] world = addWorld(80, 30, 47873);
         ter.renderFrame(world);
     }
 }
