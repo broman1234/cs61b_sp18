@@ -62,12 +62,12 @@ public class MemoryGame {
         Font font = new Font("Monaco", Font.BOLD, 30);
         StdDraw.setFont(font);
         if (!gameOver) {
-            StdDraw.text(width / (double) 5, height / (double) 10 * 9, "Round: " + round);
-            StdDraw.text(width / (double) 5 * 4, height / (double) 10 * 9, ENCOURAGEMENT[0]);
+            StdDraw.textLeft(1, height - 1, "Round: " + round);
+            StdDraw.textRight(width - 1, height - 1, ENCOURAGEMENT[0]);
             if (playerTurn) {
-                StdDraw.text(width / (double) 2, height / (double) 10 * 9, "Type!");
+                StdDraw.text(width / (double) 2, height - 1, "Type!");
             } else {
-                StdDraw.text(width / (double) 2, height / (double) 10 * 9, "Watch!");
+                StdDraw.text(width / (double) 2, height - 1, "Watch!");
             }
         }
         StdDraw.text(width / (double) 2, height / (double) 2, s);
