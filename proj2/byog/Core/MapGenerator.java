@@ -242,7 +242,7 @@ public class MapGenerator {
     public static void main(String[] args) {
         TERenderer ter = new TERenderer();
         ter.initialize(WIDTH, HEIGHT);
-        TETile[][] world = addWorld(80, 30, 47873);
+        TETile[][] world = addWorld(WIDTH, HEIGHT, 886);
         ter.renderFrame(world);
     }
 }

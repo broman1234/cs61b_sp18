@@ -1,18 +1,15 @@
 package byog.Core;
 
-import byog.TileEngine.TETile;
-import byog.TileEngine.Tileset;
+
+import java.util.Random;
 
 public class MapVisualTest {
+    static long SEED = 1;
+    static Random RANDOM = new Random(SEED);
     public static void main(String[] args) {
         Game game = new Game();
 
-        game.ter.initialize(Game.WIDTH, Game.HEIGHT);
-
-        TETile[][] world = game.playWithInputString("47873");
-        game.ter.renderFrame(world);
-
-        GameInterface.addHUD(Tileset.LOCKED_DOOR);
-
+        game.playWithInputString("N643SWAAAAASDWSDDDDD");
+        //game.playWithInputString("3");
     }
 }
