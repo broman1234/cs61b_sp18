@@ -57,6 +57,17 @@ public class MapGenerator {
         return validSides;
     }
 
+    public static ArrayList<Integer> validSidesEntrance(Square space, int side) {
+        ArrayList<Integer> validSides = new ArrayList<> ();
+        validSides.add(side);
+        for (int i = 2; i < 5; i += 1) {
+            if (i != side && space.hasConnectPoint()) {
+                validSides.add(i);
+            }
+        }
+        return validSides;
+    }
+
     public static Room roomLoop(Room room, ArrayList<Square> spaceBuilt, int side, Position prevConnectPoint) {
         int i = 0;
         Room newRoom = room;
@@ -213,6 +224,11 @@ public class MapGenerator {
         return validSides(space, side);
     }
 
+    public static ArrayList<Integer> sideWithConnectionEntrance(Square space) {
+        int side = space.randomSideExpt();
+        return validSidesEntrance(space, side);
+    }
+
     public static TETile[][] addWorld(int width, int height, long seed) {
         setupWorld(width, height, seed);
         // 1. add the background.
@@ -228,7 +244,7 @@ public class MapGenerator {
 
         // 3. at least one side to have connecting point.
         entrance.usedSide = 1;
-        ArrayList<Integer> validSides = sideWithConnection(entrance);
+        ArrayList<Integer> validSides = sideWithConnectionEntrance(entrance);
 
         // 4. use recursion to create room(hallway) branches for the entrance on each valid side.
         for (int s : validSides) {
@@ -242,7 +258,7 @@ public class MapGenerator {
     public static void main(String[] args) {
         TERenderer ter = new TERenderer();
         ter.initialize(WIDTH, HEIGHT);
-        TETile[][] world = addWorld(WIDTH, HEIGHT, 886);
+        TETile[][] world = addWorld(WIDTH, HEIGHT, 5432111);
         ter.renderFrame(world);
     }
 }

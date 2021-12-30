@@ -18,9 +18,10 @@ public class Game {
     public boolean gameOver;
     public Menu menu = new Menu(35, 45);
     public Player player = new Player();
-    public int timeStep = 0;
+    public int timeStep;
     public long SEED;
     public Random RANDOM;
+    public static int timeStepLimit = 250;
 
     /**
      * Method used for playing a fresh game. The game should start from the main menu.
@@ -31,17 +32,18 @@ public class Game {
         // 2. if n: start a new game.
         TETile[][] finalWorld = menu.chooseOption(this);
         RANDOM = new Random(SEED);
-        startGame(finalWorld);
+        play(finalWorld);
     }
-
-    public void startGame(TETile[][] world) {
+    /**
+     * play with keyboard
+     */
+    public void play(TETile[][] world) {
         ter.initialize(Game.WIDTH, Game.HEIGHT);
         gameOver = false;
-        round = 1;
         while (!gameOver) {
             while(!StdDraw.hasNextKeyTyped()) {
                 ter.renderFrame(world);
-                GameInterface.addHUD(world, (int) StdDraw.mouseX(), (int) StdDraw.mouseY());
+                GameInterface.addHUD(world, (int) StdDraw.mouseX(), (int) StdDraw.mouseY(), this);
                 StdDraw.pause(10);
             }
 
@@ -49,7 +51,7 @@ public class Game {
             if (key == ':') {
                 while(!StdDraw.hasNextKeyTyped()) {
                     ter.renderFrame(world);
-                    GameInterface.addHUD(world, (int) StdDraw.mouseX(), (int) StdDraw.mouseY());
+                    GameInterface.addHUD(world, (int) StdDraw.mouseX(), (int) StdDraw.mouseY(), this);
                     StdDraw.pause(10);
                 }
                 char secondKey = StdDraw.nextKeyTyped();
@@ -66,32 +68,33 @@ public class Game {
             if (world[player.p.x][player.p.y].equals(Tileset.LOCKED_DOOR) ) {
                 world[player.p.x][player.p.y] = Tileset.UNLOCKED_DOOR;
                 ter.renderFrame(world);
-                GameInterface.addHUD(world, (int) StdDraw.mouseX(), (int) StdDraw.mouseY());
-                world = nextRound(round);
+                GameInterface.addHUD(world, (int) StdDraw.mouseX(), (int) StdDraw.mouseY(), this);
+
                 timeStep = 0;
                 round += 1;
                 StdDraw.pause(1000);
-                continue;
+                play(nextRound(round - 1));
             }
 
             Player.addPlayer(world, player);
             ter.renderFrame(world);
-            GameInterface.addHUD(world, (int) StdDraw.mouseX(), (int) StdDraw.mouseY());
+            GameInterface.addHUD(world, (int) StdDraw.mouseX(), (int) StdDraw.mouseY(), this);
             StdDraw.pause(10);
             timeStep += 1;
 
-            if (timeStep >= 500) {
+            if (timeStep >= timeStepLimit) {
                 gameOver = true;
+                ter.renderFrame(world);
+                GameInterface.addHUD(world, (int) StdDraw.mouseX(), (int) StdDraw.mouseY(), this);
                 StdDraw.pause(2000);
                 System.exit(0);
             }
         }
     }
 
-    public TETile[][] nextRound(int round) {
-        long seed = RANDOM.nextLong() + round;
-        SEED = seed;
-        return newGame(String.valueOf(seed));
+    public TETile[][] nextRound(int i) {
+        SEED = RANDOM.nextLong() + i;
+        return newGame(String.valueOf(SEED));
     }
 
     /**
@@ -219,6 +222,9 @@ public class Game {
         try {
             ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("savefile.txt"));
             out.writeObject(finalWorldFrame);
+            out.writeLong(SEED);
+            out.write(round);
+            out.write(timeStep);
             out.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -230,6 +236,9 @@ public class Game {
         try {
             ObjectInputStream in = new ObjectInputStream(new FileInputStream("savefile.txt"));
             finalWorldFrame = (TETile[][]) in.readObject();
+            SEED = in.readLong();
+            round = in.read();
+            timeStep = in.read();
             in.close();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();

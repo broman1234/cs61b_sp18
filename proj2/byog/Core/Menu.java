@@ -2,7 +2,6 @@ package byog.Core;
 
 import byog.TileEngine.TETile;
 import edu.princeton.cs.introcs.StdDraw;
-import org.junit.Test;
 
 import java.awt.*;
 
@@ -78,11 +77,15 @@ public class Menu {
         if (strKey.equals("n")) {
             String seed = typeSeed(game);
             game.SEED = Long.parseLong(seed);
+            game.round = 1;
+            game.timeStep = 0;
             finalWorld = game.newGame(seed);
         } else if (strKey.equals("l")) {
             finalWorld = game.loadGame();
         } else if (strKey.equals("q")) {
             System.exit(0);
+        } else {
+            chooseOption(game);
         }
         return finalWorld;
     }

@@ -8,7 +8,7 @@ import java.awt.*;
 
 public class GameInterface {
 
-    public static void addHUD(TETile[][] world, int mousePosX, int mousePosY) {
+    public static void addHUD(TETile[][] world, int mousePosX, int mousePosY, Game game) {
         String s = " ";
         if (mousePosX >= 0 && mousePosX < MapGenerator.WIDTH && mousePosY >= 0 && mousePosY < MapGenerator.HEIGHT) {
             TETile t = world[mousePosX][mousePosY];
@@ -25,9 +25,15 @@ public class GameInterface {
                 s = "outdoor space";
             }
         }
-
+        int timeLeft = Game.timeStepLimit - game.timeStep;
         StdDraw.setPenColor(Color.white);
-        StdDraw.textLeft(1, Game.HEIGHT - 1, s);
+        if (game.gameOver) {
+            StdDraw.text(Game.WIDTH / 2, Game.HEIGHT - 1, "Game Over! Final level: " + game.round);
+        } else {
+            StdDraw.textLeft(1, Game.HEIGHT - 1, s);
+            StdDraw.text(Game.WIDTH / 2, Game.HEIGHT - 1, "round: " + game.round);
+            StdDraw.textRight(Game.WIDTH - 1, Game.HEIGHT - 1, "time left: " + timeLeft);
+        }
         StdDraw.show();
     }
 

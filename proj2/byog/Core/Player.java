@@ -2,9 +2,7 @@ package byog.Core;
 
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
-import edu.princeton.cs.introcs.StdDraw;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -38,10 +36,7 @@ public class Player {
     }
 
     public static void addPlayer(TETile[][] world, Player player) {
-        //StdDraw.setPenColor(Color.pink);
         world[player.p.x][player.p.y] = Tileset.PLAYER;
-        //StdDraw.circle(player.p.x, player.p.y, 0.4);
-        //StdDraw.show();
     }
 
     public void moveRight() {
