@@ -76,9 +76,9 @@ public class Menu {
         TETile[][] finalWorld = null;
         if (strKey.equals("n")) {
             String seed = typeSeed(game);
-            game.SEED = Long.parseLong(seed);
+            //game.SEED = Long.parseLong(seed);
             game.round = 1;
-            game.timeStep = 0;
+            //game.timeStep = 0;
             finalWorld = game.newGame(seed);
         } else if (strKey.equals("l")) {
             finalWorld = game.loadGame();

@@ -23,18 +23,6 @@ public class Player {
         return playerPos.get(k);
     }
 
-    public static Position getPlayerPos(TETile[][] world) {
-        Position pos = null;
-        for (int i = 0; i < MapGenerator.WIDTH; i += 1) {
-            for (int j = 0; j < MapGenerator.HEIGHT; j += 1) {
-                if (world[i][j].equals(Tileset.PLAYER)) {
-                    pos = new Position(i, j);
-                }
-            }
-        }
-        return pos;
-    }
-
     public static void addPlayer(TETile[][] world, Player player) {
         world[player.p.x][player.p.y] = Tileset.PLAYER;
     }
@@ -70,18 +58,17 @@ public class Player {
             moveLeft();
         }
         if (strKey.equals("w")) {
-
             if (world[p.x][p.y + 1].equals(Tileset.WALL)) {
                 return;
             }
             moveUp();
         }
         if (strKey.equals("s")) {
-
             if (world[p.x][p.y - 1].equals(Tileset.WALL)) {
                 return;
             }
             moveDown();
         }
+        game.timeStep += 1;
     }
 }

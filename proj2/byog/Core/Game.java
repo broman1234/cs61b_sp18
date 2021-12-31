@@ -5,7 +5,6 @@ import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
 import edu.princeton.cs.introcs.StdDraw;
 
-
 import java.io.*;
 import java.util.Random;
 
@@ -21,7 +20,7 @@ public class Game {
     public int timeStep;
     public long SEED;
     public Random RANDOM;
-    public static int timeStepLimit = 250;
+    public static int timeStepLimit = 200;
 
     /**
      * Method used for playing a fresh game. The game should start from the main menu.
@@ -31,7 +30,6 @@ public class Game {
         menu.addMenu();
         // 2. if n: start a new game.
         TETile[][] finalWorld = menu.chooseOption(this);
-        RANDOM = new Random(SEED);
         play(finalWorld);
     }
     /**
@@ -42,17 +40,19 @@ public class Game {
         gameOver = false;
         while (!gameOver) {
             while(!StdDraw.hasNextKeyTyped()) {
-                ter.renderFrame(world);
-                GameInterface.addHUD(world, (int) StdDraw.mouseX(), (int) StdDraw.mouseY(), this);
-                StdDraw.pause(10);
+                mouseMove(world, 10);
             }
 
             char key = StdDraw.nextKeyTyped();
+            String strKey = toLower(String.valueOf(key));
+
+            if (strKey.equals("q")) {
+                System.exit(0);
+            }
+
             if (key == ':') {
                 while(!StdDraw.hasNextKeyTyped()) {
-                    ter.renderFrame(world);
-                    GameInterface.addHUD(world, (int) StdDraw.mouseX(), (int) StdDraw.mouseY(), this);
-                    StdDraw.pause(10);
+                    mouseMove(world, 10);
                 }
                 char secondKey = StdDraw.nextKeyTyped();
                 String strSecondKey = toLower(String.valueOf(secondKey));
@@ -67,33 +67,30 @@ public class Game {
 
             if (world[player.p.x][player.p.y].equals(Tileset.LOCKED_DOOR) ) {
                 world[player.p.x][player.p.y] = Tileset.UNLOCKED_DOOR;
-                ter.renderFrame(world);
-                GameInterface.addHUD(world, (int) StdDraw.mouseX(), (int) StdDraw.mouseY(), this);
-
-                timeStep = 0;
+                mouseMove(world, 1000);
                 round += 1;
-                StdDraw.pause(1000);
-                play(nextRound(round - 1));
+                play(nextRound());
             }
 
             Player.addPlayer(world, player);
-            ter.renderFrame(world);
-            GameInterface.addHUD(world, (int) StdDraw.mouseX(), (int) StdDraw.mouseY(), this);
-            StdDraw.pause(10);
-            timeStep += 1;
+            mouseMove(world, 10);
 
             if (timeStep >= timeStepLimit) {
                 gameOver = true;
-                ter.renderFrame(world);
-                GameInterface.addHUD(world, (int) StdDraw.mouseX(), (int) StdDraw.mouseY(), this);
-                StdDraw.pause(2000);
+                mouseMove(world, 1500);
                 System.exit(0);
             }
         }
     }
 
-    public TETile[][] nextRound(int i) {
-        SEED = RANDOM.nextLong() + i;
+    private void mouseMove(TETile[][] world, int pauseTime) {
+        ter.renderFrame(world);
+        GameInterface.addHUD(world, (int) StdDraw.mouseX(), (int) StdDraw.mouseY(), this);
+        StdDraw.pause(pauseTime);
+    }
+
+    public TETile[][] nextRound() {
+        SEED += 1;
         return newGame(String.valueOf(SEED));
     }
 
@@ -123,6 +120,7 @@ public class Game {
 
         char firstChar = lowerInput.charAt(0);
         if (firstChar == 'n') {
+            round = 1;
             finalWorldFrame = newGame(lowerInput);
         } else if (firstChar == 'l') {
             finalWorldFrame = loadGame();
@@ -139,12 +137,19 @@ public class Game {
             char lastChar = lowerInput.charAt(lowerInput.length() - 1);
             if (secondToLastChar == ':' && lastChar == 'q') {
                 saveGame(finalWorldFrame);
+                System.exit(0);
+            }
+            if (secondToLastChar != ':' && lastChar == 'q') {
+                System.exit(0);
             }
         }
         return finalWorldFrame;
     }
 
     private String getMove(String input) {
+        if (input.length() == 0) {
+            return "";
+        }
         StringBuilder sb = new StringBuilder();
         int indexOfSave = input.indexOf(':');
         if (input.charAt(0) == 'l' && indexOfSave < 0) {
@@ -159,8 +164,8 @@ public class Game {
             }
             return sb.toString();
         }
-        if (input.indexOf('s') < 0) {
-            return "";
+        if (input.indexOf('n') < 0 ) {
+            return input;
         }
 
         int indexOfMove = input.indexOf('s') + 1;
@@ -205,16 +210,16 @@ public class Game {
     }
 
     TETile[][] newGame(String input) {
-        long seed = getSeed(input);
-        TETile[][] newWorld = MapGenerator.addWorld(MapGenerator.WIDTH, MapGenerator.HEIGHT, seed);
-        player.p = Player.setPlayerPos(newWorld, seed);
+        SEED = getSeed(input);
+        timeStep = 0;
+        TETile[][] newWorld = MapGenerator.addWorld(MapGenerator.WIDTH, MapGenerator.HEIGHT, SEED);
+        player.p = Player.setPlayerPos(newWorld, SEED);
         Player.addPlayer(newWorld, player);
         return newWorld;
     }
 
     TETile[][] loadGame() {
         TETile[][] finalWorldFrame = getSavedGame();
-        player.p = Player.getPlayerPos(finalWorldFrame);
         return finalWorldFrame;
     }
 
@@ -225,6 +230,7 @@ public class Game {
             out.writeLong(SEED);
             out.write(round);
             out.write(timeStep);
+            out.writeObject(player.p);
             out.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -239,6 +245,7 @@ public class Game {
             SEED = in.readLong();
             round = in.read();
             timeStep = in.read();
+            player.p = (Position) in.readObject();
             in.close();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -247,6 +254,8 @@ public class Game {
     }
 
     public TETile[][] play(TETile[][] world, String input) {
+        gameOver = false;
+
         String move = getMove(input);
 
         if (move.length() == 0) {
@@ -255,15 +264,27 @@ public class Game {
         }
 
         ter.renderFrame(world);
-        StdDraw.pause(250);
+        StdDraw.pause(10);
 
         for (int i = 0; i < move.length(); i += 1) {
             world[player.p.x][player.p.y] = Tileset.FLOOR;
             player.move(move.charAt(i), world, this);
+
+            if (world[player.p.x][player.p.y].equals(Tileset.LOCKED_DOOR) ) {
+                world[player.p.x][player.p.y] = Tileset.UNLOCKED_DOOR;
+                mouseMove(world, 1000);
+                round += 1;
+                return play(nextRound(), move.substring(i + 1));
+            }
+
             Player.addPlayer(world, player);
-            ter.renderFrame(world);
-            //GameInterface.addHUD(world, (int) StdDraw.mouseX(), (int) StdDraw.mouseY());
-            StdDraw.pause(250);
+            mouseMove(world, 10);
+
+            if (timeStep >= timeStepLimit) {
+                gameOver = true;
+                mouseMove(world, 1500);
+                System.exit(0);
+            }
         }
         return world;
     }
