@@ -6,7 +6,6 @@ import byog.TileEngine.Tileset;
 import edu.princeton.cs.introcs.StdDraw;
 
 import java.io.*;
-import java.util.Random;
 
 public class Game {
     TERenderer ter = new TERenderer();
@@ -19,7 +18,6 @@ public class Game {
     public Player player = new Player();
     public int timeStep;
     public long SEED;
-    public Random RANDOM;
     public static int timeStepLimit = 200;
 
     /**
