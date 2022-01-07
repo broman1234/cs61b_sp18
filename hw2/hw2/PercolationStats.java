@@ -6,10 +6,10 @@ import edu.princeton.cs.algs4.StdStats;
 import edu.princeton.cs.algs4.Stopwatch;
 
 public class PercolationStats {
-    double mean;
-    double stddev;
-    double confidenceLow;
-    double confidenceHigh;
+    private double mean;
+    private double stddev;
+    private double confidenceLow;
+    private double confidenceHigh;
 
     private double eachExperiment(int N, PercolationFactory pf) {
         Percolation sample = pf.make(N);
@@ -56,7 +56,7 @@ public class PercolationStats {
         return confidenceHigh;
     }
 
-    public static void main(String[] args) {
+    private static void main(String[] args) {
         PercolationFactory pf = new PercolationFactory();
 
         Stopwatch timer1 = new Stopwatch();

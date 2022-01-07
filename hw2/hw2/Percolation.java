@@ -2,8 +2,6 @@ package hw2;
 
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
-import javax.swing.plaf.synth.SynthLookAndFeel;
-
 public class Percolation {
     private int numOfOpenSites = 0;
     private final int size;
@@ -20,6 +18,9 @@ public class Percolation {
     }
 
     public Percolation(int N) {
+        if (N <= 0) {
+            throw new IllegalArgumentException();
+        }
         size = N;
         visualTop = size * size + 1;
         visualBottom = size * size;
@@ -88,7 +89,7 @@ public class Percolation {
         if (!inBoundary(row, col)) {
             throw new IndexOutOfBoundsException();
         }
-        return disjointSites.connected(xyTo1d(row, col), visualTop);
+        return isOpen(row, col) && disjointSites.connected(xyTo1d(row, col), visualTop);
     }
 
     public int numberOfOpenSites() {
@@ -96,6 +97,11 @@ public class Percolation {
     }
 
     public boolean percolates() {
+        if (size == 1) {
+            if (!isOpen(0, 0)) {
+                return false;
+            }
+        }
         return disjointSites.connected(visualTop, visualBottom);
     }
 
