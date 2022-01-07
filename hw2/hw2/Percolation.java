@@ -66,7 +66,7 @@ public class Percolation {
         }
         if (!isOpen(row, col)) {
             sites[row][col] = true;
-            int upRow= row - 1;
+            int upRow = row - 1;
             int upCol = col;
             unionNeighbor(row, col, upRow, upCol);
 
@@ -117,7 +117,7 @@ public class Percolation {
         Percolation sample = new Percolation(5);
         sample.open(3, 4);
         sample.open(2, 4);
-        System.out.println(sample.disjointSites.connected(sample.xyTo1d(3, 4), sample.xyTo1d(2, 4)));
+        System.out.println(sample.disjointSites.connected(14, 19));
 
         sample.open(2, 2);
         sample.open(2, 3);
