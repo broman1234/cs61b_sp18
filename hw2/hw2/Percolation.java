@@ -58,24 +58,26 @@ public class Percolation {
         if (!inBoundary(row, col)) {
             throw new IndexOutOfBoundsException();
         }
-        sites[row][col] = true;
-        int upRow= row - 1;
-        int upCol = col;
-        unionNeighbor(row, col, upRow, upCol);
+        if (!isOpen(row, col)) {
+            sites[row][col] = true;
+            int upRow= row - 1;
+            int upCol = col;
+            unionNeighbor(row, col, upRow, upCol);
 
-        int downRow = row + 1;
-        int downCol = col;
-        unionNeighbor(row, col, downRow, downCol);
+            int downRow = row + 1;
+            int downCol = col;
+            unionNeighbor(row, col, downRow, downCol);
 
-        int leftRow = row;
-        int leftCol = col - 1;
-        unionNeighbor(row, col, leftRow, leftCol);
+            int leftRow = row;
+            int leftCol = col - 1;
+            unionNeighbor(row, col, leftRow, leftCol);
 
-        int rightRow = row;
-        int rightCol = col + 1;
-        unionNeighbor(row, col, rightRow, rightCol);
+            int rightRow = row;
+            int rightCol = col + 1;
+            unionNeighbor(row, col, rightRow, rightCol);
 
-        numOfOpenSites += 1;
+            numOfOpenSites += 1;
+        }
     }
 
     public boolean isOpen(int row, int col) {
