@@ -23,8 +23,8 @@ public class Percolation {
             throw new IllegalArgumentException();
         }
         size = N;
-        visualTop = size * size + 1;
-        visualBottom = size * size;
+        visualTop = size * size;
+        visualBottom = size * size + 1;
         sites = new boolean[size][size];
 
         for (int i = 0; i < N; i += 1) {
