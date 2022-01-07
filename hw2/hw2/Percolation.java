@@ -9,6 +9,7 @@ public class Percolation {
     private final int visualBottom;
     private final boolean[][] sites;
     private WeightedQuickUnionUF disjointSites;
+    private WeightedQuickUnionUF disjointSites2;
 
     private int xyTo1d(int x, int y) {
         if (x < 0 || x >= size || y < 0 || y >= size) {
@@ -25,20 +26,24 @@ public class Percolation {
         visualTop = size * size + 1;
         visualBottom = size * size;
         sites = new boolean[size][size];
-        disjointSites = new WeightedQuickUnionUF(size * size + 2);
-        if (N <= 0) {
-            throw new IllegalArgumentException();
-        }
+
         for (int i = 0; i < N; i += 1) {
             for (int j = 0; j < N; j += 1) {
                 sites[i][j] = false;
             }
         }
+
+        disjointSites = new WeightedQuickUnionUF(size * size + 2);
         for (int i = 0, j = 0; j < N; j += 1) {
             disjointSites.union(xyTo1d(i, j), visualTop);
         }
         for (int i = N - 1, j = 0; j < N; j += 1) {
             disjointSites.union(xyTo1d(i, j), visualBottom);
+        }
+
+        disjointSites2 = new WeightedQuickUnionUF(size * size + 1);
+        for (int i = 0, j = 0; j < N; j += 1) {
+            disjointSites2.union(xyTo1d(i, j), visualTop);
         }
     }
 
@@ -50,6 +55,7 @@ public class Percolation {
         if (inBoundary(nRow, nCol)) {
             if (isOpen(nRow, nCol)) {
                 disjointSites.union(xyTo1d(row, col), xyTo1d(nRow, nCol));
+                disjointSites2.union(xyTo1d(row, col), xyTo1d(nRow, nCol));
             }
         }
     }
@@ -91,7 +97,7 @@ public class Percolation {
         if (!inBoundary(row, col)) {
             throw new IndexOutOfBoundsException();
         }
-        return isOpen(row, col) && disjointSites.connected(xyTo1d(row, col), visualTop);
+        return isOpen(row, col) && disjointSites2.connected(xyTo1d(row, col), visualTop);
     }
 
     public int numberOfOpenSites() {
