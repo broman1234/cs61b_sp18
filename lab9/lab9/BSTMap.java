@@ -142,15 +142,32 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         return kSet;
     }
 
-    private Node removeHelper(K key, Node p) {
+    private Node min(Node p) {
+        if (p.left == null) {
+            return p;
+        }
+        return min(p.left);
+    }
+
+    /* Return the tree which has the node with min key been removed */
+    private Node deleteMin(Node p) {
+        if (p.left == null) {
+            return p.right;
+        }
+        p.left = deleteMin(p.left);
+        p.size = size(p.left) + size(p.right) + 1;
+        return p;
+    }
+
+    private Node remove(K key, Node p) {
         if (p == null) {
             return null;
         }
         int cmp = key.compareTo(p.key);
         if (cmp < 0) {
-            p.left = removeHelper(key, p.left);
+            p.left = remove(key, p.left);
         } else if (cmp > 0) {
-            p.right = removeHelper(key, p.right);
+            p.right = remove(key, p.right);
         } else {
             if (p.right == null) {
                 return p.left;
@@ -158,14 +175,12 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
             if (p.left == null) {
                 return p.right;
             }
-            Node leftNode = p.left;
-            while (leftNode.right != null) {
-                leftNode = leftNode.right;
-            }
-            leftNode.right = p.right;
-            p.size -= 1;
-            return p.left;
+            Node temp = p;
+            p = min(temp.right);
+            p.right = deleteMin(temp.right);
+            p.left = temp.left;
         }
+        p.size = size(p.left) + size(p.right) + 1;
         return p;
     }
 
@@ -179,7 +194,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
             return null;
         }
         V removedValue = get(key);
-        root = removeHelper(key, root);
+        root = remove(key, root);
         return removedValue;
     }
 
@@ -192,10 +207,11 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         if (!containsKey(key)) {
             return null;
         }
-        if (value != get(key)) {
+        if (!get(key).equals(value)) {
             return null;
         }
-        return remove(key);
+        root = remove(key, root);
+        return value;
     }
 
     @Override
