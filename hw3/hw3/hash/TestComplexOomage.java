@@ -44,6 +44,10 @@ public class TestComplexOomage {
         // Your code here.
         for (int i = 1; i < 50; i += 1) {
             ArrayList<Integer> params = new ArrayList<>();
+            // According to hashCode() in ComplexOomage.java and Hint.java,
+            // if the hashCode exceeds 256e3, it will overflow, causing collisions.
+            // Use add(1) rather than add(some_constant) will let built-in
+            // hashCode() to pass.
             for (int j = 0; j < i; j += 1) {
                 params.add(1);
             }
