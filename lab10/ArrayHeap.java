@@ -111,7 +111,10 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         validateSinkSwimArg(index);
 
         /** TODO: Your code here. */
-        if (index == min(index, parentIndex(index)) && parentIndex(index) != 0) {
+        if (!inBounds(parentIndex(index))) {
+            return;
+        }
+        if (index == min(index, parentIndex(index))) {
             swap(index, parentIndex(index));
             int parent = parentIndex(index);
             swim(parent);
@@ -131,10 +134,10 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         }
         int leftChild = leftIndex(index);
         int rightChild = rightIndex(index);
-        if (index != min(index, leftChild) && leftChild == min(leftChild, rightChild)) {
+        if (leftChild == min(leftChild, index) && leftChild == min(rightChild, leftChild)) {
             swap(index, leftChild);
             sink(leftChild);
-        } else if (index != min(index, rightChild) && rightChild == min(leftChild, rightChild)) {
+        } else if (rightChild == min(rightChild, index)) {
             swap(index, rightChild);
             sink(rightChild);
         }
