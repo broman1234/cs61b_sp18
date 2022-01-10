@@ -131,10 +131,10 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         }
         int leftChild = leftIndex(index);
         int rightChild = rightIndex(index);
-        if (index != min(index, leftIndex(index)) && leftIndex(index) == min(leftIndex(index), rightIndex(index))) {
+        if (index != min(index, leftChild) && leftChild == min(leftChild, rightChild)) {
             swap(index, leftChild);
             sink(leftChild);
-        } else if (index != min(index, rightIndex(index)) && rightIndex(index) == min(leftIndex(index), rightIndex(index))) {
+        } else if (index != min(index, rightChild) && rightChild == min(leftChild, rightChild)) {
             swap(index, rightChild);
             sink(rightChild);
         }
@@ -181,6 +181,9 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
     public T removeMin() {
         /* TODO: Your code here! */
         Node toRemove = contents[1];
+        if (toRemove == null) {
+            return null;
+        }
         swap(1, size);
         contents[size] = null;
         sink(1);
@@ -211,6 +214,8 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         for (int i = 0; i <= size; i += 1) {
             if (contents[i].myItem.equals(item)) {
                 contents[i].myPriority = priority;
+                swim(i);
+                sink(i);
                 break;
             }
         }
