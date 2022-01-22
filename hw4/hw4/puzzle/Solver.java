@@ -50,18 +50,11 @@ public class Solver {
         fringe.insert(searchNode);
         while (!fringe.isEmpty()) {
             searchNode = fringe.delMin();
-            // marked.add(searchNode.currNode);
-            //solution.add(searchNode.currNode);
             if (searchNode.currNode.isGoal()) {
                 minMove = searchNode.moveTo;
                 break;
             }
             for (WorldState w : searchNode.currNode.neighbors())  {
-                /*
-                if (!marked.contains(w)) {
-                    fringe.add(new Node(w, searchNode.moveTo + 1, searchNode));
-                    totalAdd++;
-                }*/
                 Node newNode = new Node(w, searchNode.moveTo + 1, searchNode);
                 if (searchNode.prevNode != null && w.equals(searchNode.prevNode.currNode)) {
                     continue;

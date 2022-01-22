@@ -160,7 +160,8 @@ public class Board implements WorldState{
         return s.toString();
     }
 
-    public int hashcode() {
+    @Override
+    public int hashCode() {
         return super.hashCode();
     }
 }
