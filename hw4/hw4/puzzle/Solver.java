@@ -1,5 +1,7 @@
 package hw4.puzzle;
 
+import edu.princeton.cs.algs4.MinPQ;
+
 import java.util.*;
 
 public class Solver {
@@ -43,11 +45,11 @@ public class Solver {
      * problem again. Solves the puzzle using the A* algorithm.
      * Assumes a solution exists. */
     public Solver(WorldState initial) {
-        PriorityQueue<Node> fringe = new PriorityQueue<>(new NodeComparator());
+        MinPQ<Node> fringe = new MinPQ<>(new NodeComparator());
         Node searchNode = new Node(initial, 0, null);
-        fringe.add(searchNode);
+        fringe.insert(searchNode);
         while (!fringe.isEmpty()) {
-            searchNode = fringe.poll();
+            searchNode = fringe.delMin();
             // marked.add(searchNode.currNode);
             //solution.add(searchNode.currNode);
             if (searchNode.currNode.isGoal()) {
@@ -64,7 +66,7 @@ public class Solver {
                 if (searchNode.prevNode != null && w.equals(searchNode.prevNode.currNode)) {
                     continue;
                 }
-                fringe.add(newNode);
+                fringe.insert(newNode);
             }
         }
 
