@@ -5,7 +5,6 @@ import java.util.*;
 public class Solver {
     private int minMove;
     private List<WorldState> solution = new ArrayList<>();
-    int totalAdd;
     private Map<WorldState, Integer> edtgCaches = new HashMap<>();
 
     private class Node {
@@ -47,7 +46,6 @@ public class Solver {
         PriorityQueue<Node> fringe = new PriorityQueue<>(new NodeComparator());
         Node searchNode = new Node(initial, 0, null);
         fringe.add(searchNode);
-        totalAdd++;
         while (!fringe.isEmpty()) {
             searchNode = fringe.poll();
             // marked.add(searchNode.currNode);
@@ -67,7 +65,6 @@ public class Solver {
                     continue;
                 }
                 fringe.add(newNode);
-                totalAdd++;
             }
         }
 
